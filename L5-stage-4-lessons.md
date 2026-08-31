@@ -801,8 +801,6 @@ I mean until the men in your life have vetted him and he's demonstrated that he 
 
 That accountability piece matters.
 
-It's one of the strongest parts of this entire framework because it requires him to step into masculine leadership and be seen by other men.
-
 That's not old-fashioned.
 
 That's good discernment.
@@ -1309,8 +1307,6 @@ By now, you may be thinking,
 
 I understand.
 
-When I first learned this framework, I felt the same way.
-
 But don't skip this final step.
 
 Everything you've learned throughout this course has been designed to help you choose a husband wisely—not simply become a wife quickly.
@@ -1379,13 +1375,13 @@ Because here is the truth: most women enter courtship without a map. They are re
 
 And then they wonder why, after months of what felt like something real, nothing actually moved.
 
-SLIDE 2 - The confusion is not your fault. You were never given the map. You were never shown what healthy courtship actually looks like at each stage — what to expect, what to require, and what to walk away from. So you were left reading the signals with no framework to read them through.
+SLIDE 2 - The confusion is not your fault. You were never given the map. You were never shown what healthy courtship actually looks like at each stage — what to expect, what to require, and what to walk away from.
 
 That ends here.
 
 This lesson is your map. By the time we are done, you will know exactly what stage you are in, what a man with genuine courtship capacity looks like at that stage, and what you should and should not accept as the connection progresses. You will never misread a stage again.
 
-One thing before we start — this is not a discernment lesson. Discernment gets its own dedicated training. What we are doing here is giving you the framework so that when we get to discernment, you already understand the structure it lives inside.
+One thing before we start — this is not a discernment lesson. Discernment gets its own dedicated training.
 
 **SLIDE 3 — HOW MEN THINK: THE FOUNDATION YOU NEED FIRST**
 
@@ -1463,7 +1459,7 @@ Consistency in his communication, his pursuit, and how he is showing up. He shou
 
 **What you should not expect:**
 
-Deep marriage conversations. Full certainty about long-term compatibility. That is not what this phase is for. If there are clear dealbreakers surfacing — yes, those eliminate him. But if a man is leading well, showing up consistently, and there are no glaring incompatibilities — you continue. You observe. You use the Courtship Decoder for anything that feels unclear.
+Deep marriage conversations. Full certainty about long-term compatibility. That is not what this phase is for. If there are clear dealbreakers surfacing — yes, those eliminate him. But if a man is leading well, showing up consistently, and there are no glaring incompatibilities — you continue. You observe.
 
 **SLIDE 7 — STAGE 3: THE NO-GIRLFRIEND STANDARD TO THE RING**
 

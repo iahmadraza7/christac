@@ -84,8 +84,6 @@ And when you feel that pull — when something about a man feels exciting even t
 
 You are here to observe what is already present. Not to hope for what might be possible.
 
-Use the Courtship Decoder anytime a profile leaves you uncertain — it will walk you through the filter in real time.
-
 ## FOLLOW UP — Stage 1 — How to Build Your Dating Profile as a Woman Already Choosing Her Husband
 
 USE: after a verdict only. Never to reach one.
@@ -138,7 +136,7 @@ The first thing I want you to do is build a brand new profile. Not a revamped ve
 
 Here is why this matters — 
 
-Your old profile was built from a different version of you. A version that was operating without this framework, without this identity, without the clarity you have right now. The men you swiped left on, the matches that went nowhere, the dynamics that stalled — some of that started at the profile level. That energy is in the old profile. And you are not carrying it forward.
+Your old profile was built from a different version of you. The men you swiped left on, the matches that went nowhere, the dynamics that stalled — some of that started at the profile level. That energy is in the old profile. And you are not carrying it forward.
 
 You are also resetting the algorithm — which means you are giving yourself a fresh start with fresh eyes seeing you.
 
@@ -300,9 +298,7 @@ SLIDE 2: you have probably been doing this without realizing it. Not because you
 
 And what that does — consistently — is place her inside a dynamic where a man gets comfortable instead of getting intentional. Where he categorizes her as girlfriend material instead of experiencing her as a woman he needs to claim. This is how she ends up with a man for months, sometimes years — a man who felt good, a man she genuinely liked — who never actually led anything real forward. That pattern ends here.
 
-SLIDE 3 — THE HEART OF THE FRAMEWORK
-
-What I am about to give you is the heart of the High-League Courtship framework. This is High-League Positioning for Stages 1 and 2. And I need you to understand what that means before we go any further — because this is not a list of preferences. These are not boundaries you explain to a man. These are not rules you bend depending on how much you like him or how much he seems to be trying. These are fixed decisions. You decide once. And you follow them with every man.
+This is High-League Positioning for Stages 1 and 2. And I need you to understand what that means before we go any further — because this is not a list of preferences. These are not boundaries you explain to a man. These are not rules you bend depending on how much you like him or how much he seems to be trying. These are fixed decisions. You decide once. And you follow them with every man.
 
 You are allowed to have fixed decisions. You are allowed to have standards that do not move based on chemistry or potential or how good he seems on paper. You are allowed to be a woman whose standards are non-negotiable — not because you are rigid, but because you know exactly what you are worth and exactly what you are calling in.
 
@@ -316,7 +312,7 @@ SLIDE 6 — POSITIONING 2: HE LEADS ALL FORWARD MOVEMENT This is a strict rule a
 
 SLIDE 7 — POSITIONING 3: THERE IS NO INTIMACY WITHOUT COMMITMENT - This positioning is strict across both stages. You do not offer intimacy that creates bonding before a man has committed to you. No home dates. No come over, I'll cook for you. No emotionally deep, vulnerable connection early. No physical intimacy. I know this one is going to feel like the hardest. Because you are warm. Because you connect deeply. Because when you like someone, the natural thing is to want to let them in. And that impulse is not wrong — it is actually one of the most beautiful things about you. But here is what happens when intimacy comes before commitment. Intimacy creates attachment. And attachment without commitment is exactly how women get stuck in dynamics that never progress. The pattern is consistent — the faster intimacy is introduced, the slower commitment becomes. Because a man who has emotional and physical access to you has already received what commitment is supposed to unlock. He has no reason to move forward. And every reason to stay comfortable. This structure is not asking you to be cold. It is asking you to be protected. To save the depth of your warmth, your vulnerability, your physical presence for the man who has earned the right to receive it. That is not withholding. That is self-respect. And it is one of the most magnetic things a woman can embody.
 
-SLIDE 8 — POSITIONING 4: THERE IS NO EXCLUSIVITY UNTIL ENGAGEMENT- You date multiple men. This is the overriding positioning across the entire High-League Courtship framework — and it applies fully in Stages 1 and 2. One note: if a man asks for exclusivity very early — in Stage 1 or early Stage 2 — pay attention to that. The intention may be genuine, but the timing is a flag. A man who wants to lock you down before he actually knows you is not demonstrating healthy courtship pacing. Regardless of timing, the position is the same: You do not become a girlfriend. You do not agree to exclusivity. You do not collapse into one man. I know what happens when you start liking someone. The other men start to feel like noise. You stop wanting to go on dates with anyone else. You start centering this one man in your mind even when you are not with him. And it feels like loyalty. It feels like you are a good woman who does not play games. But here is what is actually happening: you have just given him your exclusivity without him earning it. And the moment you do that — before the structure has done its work — you lose your position. You start hoping instead of observing. You start waiting instead of choosing. This is not about waiting longer. This is about refusing to enter a stage that gives a man relational access without requiring him to lead you into real commitment. If he wants you, he leads you all the way. Not halfway.
+SLIDE 8 — POSITIONING 4: THERE IS NO EXCLUSIVITY UNTIL ENGAGEMENT- You date multiple men. One note: if a man asks for exclusivity very early — in Stage 1 or early Stage 2 — pay attention to that. The intention may be genuine, but the timing is a flag. A man who wants to lock you down before he actually knows you is not demonstrating healthy courtship pacing. Regardless of timing, the position is the same: You do not become a girlfriend. You do not agree to exclusivity. You do not collapse into one man. I know what happens when you start liking someone. The other men start to feel like noise. You stop wanting to go on dates with anyone else. You start centering this one man in your mind even when you are not with him. And it feels like loyalty. It feels like you are a good woman who does not play games. But here is what is actually happening: you have just given him your exclusivity without him earning it. And the moment you do that — before the structure has done its work — you lose your position. You start hoping instead of observing. You start waiting instead of choosing. This is not about waiting longer. This is about refusing to enter a stage that gives a man relational access without requiring him to lead you into real commitment. If he wants you, he leads you all the way. Not halfway.
 
 SLIDE 9 — POSITIONING 5: YOUR WORLD IS EARNED
 
@@ -372,12 +368,6 @@ What is he actually showing me about who he is?
 Is he proud of something real. Is he building something. Is he engaged in his life. Does he have direction.
 
 Because a man who is grounded in himself will often sound very different from a man who is trying to perform for you.
-
-So you give space for that.
-
-Not unlimited time. Not emotional investment. But space.
-
-You let him reveal himself through how he communicates over time. Through whether his words match his actions. Through whether he moves things forward.
 
 And then you decide.
 
@@ -1179,13 +1169,9 @@ Nothing actually changed.
 
 He simply took a moment before leaning back in.
 
-You don't need to fix that.
+You don't need to worry about that, but instead ask yourself, do you want to continue giving this man your energy when you don't like the way he communicates between dates?
 
-You don't need to text him first.
-
-You don't need to wonder if he's losing interest.
-
-You simply let him come back.
+Remember you cannot change the man, but you can change THE man.
 
 Now compare that to something different.
 
@@ -1370,12 +1356,6 @@ He's still investing.
 But somehow...
 
 His energy feels different.
-
-And I want you to be really honest here.
-
-How many times have you decided something changed...
-
-Before anything actually changed?
 
 You notice one shorter text.
 
@@ -1706,18 +1686,6 @@ Every man will make mistakes.
 You're not looking for perfection.
 
 You're looking for responsiveness.
-
-If he misses the mark...
-
-Feels your standard...
-
-Adjusts...
-
-And never repeats it...
-
-That's growth.
-
-Receive it.
 
 But if the same behavior keeps showing up...
 
@@ -2601,13 +2569,13 @@ Because here is the truth: most women enter courtship without a map. They are re
 
 And then they wonder why, after months of what felt like something real, nothing actually moved.
 
-SLIDE 2 - The confusion is not your fault. You were never given the map. You were never shown what healthy courtship actually looks like at each stage — what to expect, what to require, and what to walk away from. So you were left reading the signals with no framework to read them through.
+SLIDE 2 - The confusion is not your fault. You were never given the map. You were never shown what healthy courtship actually looks like at each stage — what to expect, what to require, and what to walk away from.
 
 That ends here.
 
 This lesson is your map. By the time we are done, you will know exactly what stage you are in, what a man with genuine courtship capacity looks like at that stage, and what you should and should not accept as the connection progresses. You will never misread a stage again.
 
-One thing before we start — this is not a discernment lesson. Discernment gets its own dedicated training. What we are doing here is giving you the framework so that when we get to discernment, you already understand the structure it lives inside.
+One thing before we start — this is not a discernment lesson. Discernment gets its own dedicated training.
 
 **SLIDE 3 — HOW MEN THINK: THE FOUNDATION YOU NEED FIRST**
 
@@ -2685,7 +2653,7 @@ Consistency in his communication, his pursuit, and how he is showing up. He shou
 
 **What you should not expect:**
 
-Deep marriage conversations. Full certainty about long-term compatibility. That is not what this phase is for. If there are clear dealbreakers surfacing — yes, those eliminate him. But if a man is leading well, showing up consistently, and there are no glaring incompatibilities — you continue. You observe. You use the Courtship Decoder for anything that feels unclear.
+Deep marriage conversations. Full certainty about long-term compatibility. That is not what this phase is for. If there are clear dealbreakers surfacing — yes, those eliminate him. But if a man is leading well, showing up consistently, and there are no glaring incompatibilities — you continue. You observe.
 
 **SLIDE 7 — STAGE 3: THE NO-GIRLFRIEND STANDARD TO THE RING**
 

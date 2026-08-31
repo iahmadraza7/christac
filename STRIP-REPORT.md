@@ -2,16 +2,18 @@
 
 Source: `FRAMEWORK_LESSONS.docx` (37,982 words). Output: `L1`–`L5` lesson files.
 
-Nothing here was reworded. This report lists every line removed from her document, every line I was not confident enough to remove, and every line flagged but left alone.
+This report lists every line removed from her document, every line changed on her instruction, and every line flagged but left alone. Nothing was reworded by me: where a paragraph changed, it is because she asked for that exact change, and both the before and the after are printed below.
 
-**Totals.** Two kinds of removal, 275 content paragraphs in all.
+**Totals.**
 
-| Removal | Paragraphs | Words | Content lost? |
+| Change | Paragraphs | Words | Section |
 | --- | --- | --- | --- |
-| Duplicated decode criteria (section 1.1) | 13 | 904 | Yes — deliberately. The decode files already carry every one of these rules. |
-| A lesson the source contains twice (section 1.2) | 262 | 2,301 | No. Every content line also appears in the surviving copy, checked line by line. |
+| Duplicated decode criteria removed | 13 | 904 | 1.1 |
+| A lesson the source contains twice, removed | 262 | 2,301 | 1.2 |
+| Removed on her instruction | 20 | 169 | 1.3 |
+| Edited on her instruction | 7 | 103 cut, 43 added | 2 |
 
-Everything else appears in at least one lesson file. Cross-stage lessons are duplicated into each stage they apply to, as the spec requires, which is why 37,078 kept words become 96,853 written words (2.61x).
+Cross-stage lessons are duplicated into each stage they apply to, as the spec requires, which is why her kept words become 96,227 written words.
 
 ---
 
@@ -19,7 +21,7 @@ Everything else appears in at least one lesson file. Cross-stage lessons are dup
 
 ### 1.1 Duplicated decode criteria
 
-These are the enumerated criteria lists named in the spec. The prose teaching around them was kept. Line numbers are paragraph positions in the source document.
+The enumerated criteria lists named in the spec. The prose teaching around them was kept. Line numbers are paragraph positions in the source document.
 
 #### SLIDE 3 — AUTOMATIC FAILS — SWIPE LEFT IMMEDIATELY
 
@@ -85,9 +87,9 @@ Already covered by: `01-stage-1-before-first-date.md` → Automatic Failing Sign
 
 **Kept from this slide — 3 paragraph(s), 163 words:**
 
-- Line 36: Every single one of these automatic fails is a man telling you exactly who he is right now — before you have spent a single minute on him. And the fac…
-- Line 38: That ends here. You are not here to see potential. You are here to observe what is already present. And what is present on his profile is already data…
-- Line 54: Here is the permission I want to give you with this slide: you are allowed to swipe left immediately. You do not need to give every man a chance. You …
+- Line 36: Every single one of these automatic fails is a man telling you exactly who he is right now — before you have spent a single minute on him. A…
+- Line 38: That ends here. You are not here to see potential. You are here to observe what is already present. And what is present on his profile is al…
+- Line 54: Here is the permission I want to give you with this slide: you are allowed to swipe left immediately. You do not need to give every man a ch…
 
 #### SLIDE 4 — PASSING SIGNS — WORTH SWIPING RIGHT
 
@@ -122,7 +124,7 @@ Already covered by: `01-stage-1-before-first-date.md` → Passing Signs — Stag
 **Kept from this slide — 2 paragraph(s), 93 words:**
 
 - Line 60: None of the automatic fails are present. And you are seeing some of the following.
-- Line 68: He has not asked you on the app what kind of relationship you are looking for before the first date. I want to name this specifically because it trips…
+- Line 68: He has not asked you on the app what kind of relationship you are looking for before the first date. I want to name this specifically becaus…
 
 #### SLIDE 3 — AUTOMATIC FAILS
 
@@ -146,7 +148,7 @@ Automatic fails. If any of these show up in Stage 1 or Stage 2 Phase 1, he does 
 
 Already covered by: `01-stage-1-before-first-date.md` → Automatic Failing Signs — Stage 1, Marriage Readiness Filter: Communication Before the First Date (every item), plus `01-stage-1-before-first-date.md` → Automatic Failing Signs — Stage 1, Courtship Pace Filter: Communication, Progression, and Actions Toward the First Date for the “after four to six exchanges, he has not asked you on a date” item.
 
-**Kept from this slide: nothing.** The heading and its single body paragraph were both criteria, so the whole slide is gone. This is the only slide the strip removes entirely — flagging it because it is a bigger cut than the others.
+**Kept from this slide: nothing.** The heading and its single body paragraph were both criteria, so the whole slide is gone.
 
 #### SLIDE 4 — PASSING SIGNS AND THE GREEN FLAGS WOMEN MISS
 
@@ -162,27 +164,17 @@ Passing signs in communication look like this. He speaks positively about his li
 
 Already covered by: `01-stage-1-before-first-date.md` → Passing Signs — Stage 1, Marriage Readiness Filter: Communication Before the First Date (every item).
 
-**Kept from this slide — 19 paragraph(s), 364 words:**
+**Kept from this slide — 16 paragraph(s), 326 words:**
 
 - Line 332: Now here is where I want to shift your attention, because this is where women misread men all the time.
 - Line 333: The green flags you are missing are often hiding inside communication that doesn’t feel immediately impressive.
-- Line 334: The man who talks a little too much about his hobby. The man who lights up when he’s explaining something he built, something he’s proud of, something…
+- Line 334: The man who talks a little too much about his hobby. The man who lights up when he’s explaining something he built, something he’s proud of,…
 - Line 335: Pause there.
 - Line 336: Because most of the time, what you are actually witnessing is not arrogance. It is a man trying to impress you.
-- Line 337: Men impress through what they do. What they build. What they achieve. What they know. That is how they show value. So when he is talking about those t…
+- Line 337: Men impress through what they do. What they build. What they achieve. What they know. That is how they show value. So when he is talking abo…
 - Line 338: And this is where most women misinterpret.
-- Line 339: You’ve been trained to respond to performance. The perfectly curated man. The smooth talker. The one who knows exactly what to say and how to say it. …
-- Line 340: But performance is not the same as substance.
-- Line 341: The man who performs well in conversation is not always the man who leads well in a relationship.
-- Line 342: And the man who leads well is not always the man who communicates in a polished, perfectly calibrated way.
-- Line 343: So instead of asking yourself, “am I impressed by how he’s saying this,” I want you to ask something different.
-- Line 344: What is he actually showing me about who he is?
-- Line 345: Is he proud of something real. Is he building something. Is he engaged in his life. Does he have direction.
-- Line 346: Because a man who is grounded in himself will often sound very different from a man who is trying to perform for you.
-- Line 347: So you give space for that.
-- Line 348: Not unlimited time. Not emotional investment. But space.
-- Line 349: You let him reveal himself through how he communicates over time. Through whether his words match his actions. Through whether he moves things forward…
-- Line 350: And then you decide.
+- Line 339: You’ve been trained to respond to performance. The perfectly curated man. The smooth talker. The one who knows exactly what to say and how t…
+- …and 8 more paragraphs of this slide
 
 ---
 
@@ -194,41 +186,208 @@ Already covered by: `01-stage-1-before-first-date.md` → Passing Signs — Stag
 - Source paragraphs removed: 2301–2566 (262 content paragraphs, 2,301 words)
 - Surviving copy: paragraphs 2697–2968, still in `L5-stage-4-lessons.md`
 
-**Removed on the client's decision.** `STAGE 4: HIGH LEAGUE POSITIONING` appears twice in the source document. The two copies are 99.6% identical; the second is a superset, carrying a closing `Lesson Summary` the first does not have. Keeping both meant the Stage 4 file stated the same positioning rules twice, which is the condition the spec says muddies matching.
+**Removed on her decision.** `STAGE 4: HIGH LEAGUE POSITIONING` appears twice in the source. The copies are 99.6% identical; the second is a superset, carrying a closing `Lesson Summary` the first lacks.
 
-**No content was lost.** Every one of the 262 content paragraphs in the removed copy also appears in the surviving copy — checked paragraph by paragraph, 0 exceptions. The exact removed text is therefore still readable in `L5-stage-4-lessons.md`, which is why it is not re-quoted in full here.
+**No content was lost.** Every content paragraph of the removed copy also appears in the surviving copy. One exception is deliberate and worth naming: line 2474 was a byte-identical twin of line 2870, and she cut 2870 in decision 5 below. That sentence is therefore now gone from both copies, which is what she asked for.
 
-Opening of the removed copy (lines 2301–2302):
+---
+
+### 1.3 Removed on her instruction
+
+Her decisions 2, 3, 4 and 5. Each of these is a whole paragraph she named.
+
+#### Decision 2 — SLIDE 4 “HIS ENERGY FEELS DIFFERENT... BUT HE'S STILL SHOWING UP”
+
+- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Affects: L1, L2, L3, L4
+- Paragraphs removed: 3 (21 words)
+- Her words: cut this part, keep the filter verdict.
+
+**Removed:**
 
 ```
-STAGE 4: HIGH LEAGUE POSITIONING
-Slide 1 — Welcome to Stage 4
+869: And I want you to be really honest here.
+870: How many times have you decided something changed...
+871: Before anything actually changed?
 ```
 
-Last paragraph removed (line 2565):
+The slide now runs from “His energy feels different.” straight to “You notice one shorter text.” — it reads cleanly.
+
+#### Decision 3 — SLIDE 10 “HE RECOVERED”
+
+- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Affects: L1, L2, L3, L4
+- Paragraphs removed: 6 (17 words)
+- Her words: cut it.
+
+**Removed:**
 
 ```
-The engagement isn't where discernment ends. It's where discernment is completed.
+1043: If he misses the mark...
+1044: Feels your standard...
+1045: Adjusts...
+1046: And never repeats it...
+1047: That's growth.
+1048: Receive it.
 ```
 
-What the surviving copy has that this one did not:
+**Worth her eye.** What follows the cut is “But if the same behavior keeps showing up...”, and that “But” used to contrast with “That's growth. Receive it.” It now contrasts with “You're looking for responsiveness.” The sense survives but the hinge is weaker. Left exactly as it fell, because fixing it would mean rewriting her line.
+
+#### Decision 4 — SLIDE 4 green-flag coaching, communication lesson
+
+- Lesson: Communication During Stage 1 Through Stage 2 Phase 1  ·  Affects: L1, L2
+- Paragraphs removed: 3 (38 words)
+- Her words: cut this one.
+
+**Removed:**
 
 ```
-Lesson Summary
-Engagement is not the time to abandon the positioning that created the relationship. Access is still earned. Your world unfolds intentionally. Speak from desire, not direction, so you preserve the polarity that brought you together. Hold your position all the way to the altar, because the way you got here is the way you build a lasting marriage.
+347: So you give space for that.
+348: Not unlimited time. Not emotional investment. But space.
+349: You let him reveal himself through how he communicates over time. Through whether his words match his actions. Through whether he moves things forward.
+```
+
+The slide now runs from “Because a man who is grounded in himself will often sound very different…” to “And then you decide.” — it reads cleanly.
+
+#### Decision 5 — framework and Decoder lines that were whole paragraphs
+
+- Lesson: various  ·  Affects: see each line
+- Paragraphs removed: 5 (71 words)
+- Her rule: where the phrase is a whole sentence, delete the sentence.
+
+**Removed:**
+
+```
+98: Use the Courtship Decoder anytime a profile leaves you uncertain — it will walk you through the filter in real time.
+296: SLIDE 3 — THE HEART OF THE FRAMEWORK
+1517: Only then does this framework activate.
+2870: It's one of the strongest parts of this entire framework because it requires him to step into masculine leadership and be seen by other men.
+3130: When I first learned this framework, I felt the same way.
+```
+
+Each of these paragraphs was nothing but the offending sentence, so the paragraph goes. Line 296 was the heading `SLIDE 3 — THE HEART OF THE FRAMEWORK`; that slide now opens straight into its body text, with no heading.
+
+---
+
+## 2. Edited on her instruction
+
+### 2.1 Decision 1 — she rewrote the ending of SLIDE 2 herself
+
+Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Affects: L1, L2, L3, L4  ·  Source paragraphs 771–774
+
+**Before — her four lines, removed:**
+
+```
+You don't need to fix that.
+You don't need to text him first.
+You don't need to wonder if he's losing interest.
+You simply let him come back.
+```
+
+**After — her new text, reproduced exactly as she wrote it:**
+
+```
+You don't need to worry about that, but instead ask yourself, do you want to continue giving this man your energy when you don't like the way he communicates between dates?
+Remember you cannot change the man, but you can change THE man.
+```
+
+This is the one place in the whole layer where new words appear. They are hers, not mine. It also resolves the strongest softening flag in section 4: the old ending told her to sit still and let him come back, which cut against the Courtship Pace filter. The new ending turns it into a question about whether she wants to keep spending her energy.
+
+### 2.2 Decision 5 — one sentence lifted out of six paragraphs
+
+Her rule was: delete the sentence where the phrase is a whole sentence; where it sits mid sentence and removing it would mean rewriting her prose, leave it and raise it as a question. In these six the offending sentence lifts out cleanly and the rest of her paragraph is untouched, word for word.
+
+#### Line 146
+
+**Sentence removed:**
+
+```
+A version that was operating without this framework, without this identity, without the clarity you have right now.
+```
+
+**Paragraph as it now reads:**
+
+```
+Your old profile was built from a different version of you. The men you swiped left on, the matches that went nowhere, the dynamics that stalled — some of that started at the profile level. That energy is in the old profile. And you are not carrying it forward.
+```
+
+#### Line 298
+
+**Sentence removed:**
+
+```
+What I am about to give you is the heart of the High-League Courtship framework.
+```
+
+**Paragraph as it now reads:**
+
+```
+This is High-League Positioning for Stages 1 and 2. And I need you to understand what that means before we go any further — because this is not a list of preferences. These are not boundaries you explain to a man. These are not rules you bend depending on how much you like him or how much he seems to be trying. These are fixed decisions. You decide once. And you follow them with every man.
+```
+
+#### Line 311
+
+**Sentence removed:**
+
+```
+This is the overriding positioning across the entire High-League Courtship framework — and it applies fully in Stages 1 and 2.
+```
+
+**Paragraph as it now reads:**
+
+```
+SLIDE 8 — POSITIONING 4: THERE IS NO EXCLUSIVITY UNTIL ENGAGEMENT- You date multiple men. One note: if a man asks for exclusivity very early — in Stage 1 or early Stage 2 — pay attention to that. The intention may be genuine, but the timing is a flag. A man who wants to lock you down before he actually knows you is not demonstrating healthy courtship pacing. Regardless of timing, the position is the same: You do not become a girlfriend. You do not agree to exclusivity. You do not collapse into one man. I know what happens when you start liking someone. The other men start to feel like noise. You stop wanting to go on dates with anyone else. You start centering this one man in your mind even when you are not with him. And it feels like loyalty. It feels like you are a good woman who does not play games. But here is what is actually happening: you have just given him your exclusivity without him earning it. And the moment you do that — before the structure has done its work — you lose your position. You start hoping instead of observing. You start waiting instead of choosing. This is not about waiting longer. This is about refusing to enter a stage that gives a man relational access without requiring him to lead you into real commitment. If he wants you, he leads you all the way. Not halfway.
+```
+
+**Worth her eye.** That sentence also carried a scope note — “and it applies fully in Stages 1 and 2”. Removing the sentence removes the scope note with it. Nothing else in the slide states which stages the positioning covers.
+
+#### Line 3165
+
+**Sentence removed:**
+
+```
+So you were left reading the signals with no framework to read them through.
+```
+
+**Paragraph as it now reads:**
+
+```
+SLIDE 2 - The confusion is not your fault. You were never given the map. You were never shown what healthy courtship actually looks like at each stage — what to expect, what to require, and what to walk away from.
+```
+
+#### Line 3168
+
+**Sentence removed:**
+
+```
+What we are doing here is giving you the framework so that when we get to discernment, you already understand the structure it lives inside.
+```
+
+**Paragraph as it now reads:**
+
+```
+One thing before we start — this is not a discernment lesson. Discernment gets its own dedicated training.
+```
+
+#### Line 3213
+
+**Sentence removed:**
+
+```
+You use the Courtship Decoder for anything that feels unclear.
+```
+
+**Paragraph as it now reads:**
+
+```
+Deep marriage conversations. Full certainty about long-term compatibility. That is not what this phase is for. If there are clear dealbreakers surfacing — yes, those eliminate him. But if a man is leading well, showing up consistently, and there are no glaring incompatibilities — you continue. You observe.
 ```
 
 ---
 
-## 2. Questions
-
-The spec says to leave anything that is not clearly a duplicate and list it here instead.
+## 3. Questions
 
 ### Q1. The Stage 4 positioning lesson appears twice — DECIDED, actioned
 
-**Her decision: delete the first copy (paragraphs 2301–2566), keep the second (2697–2968).** Applied. `L5-stage-4-lessons.md` went from 7 blocks to 6, and from 88,941 to 75,057 characters. The removal is now recorded in section 1.2 alongside the others.
-
-This question is closed. Nothing further is needed on it.
+Her decision: delete the first copy (2301–2566), keep the second (2697–2968). Applied, and recorded in section 1.2. Closed.
 
 ### Q2. One passing sign that carries real coaching with it — still open
 
@@ -238,34 +397,62 @@ Line 68, in `SLIDE 4 — PASSING SIGNS — WORTH SWIPING RIGHT`:
 He has not asked you on the app what kind of relationship you are looking for before the first date. I want to name this specifically because it trips women up. That is not a red flag. Many intentional, marriage-ready men prefer to establish a real in-person connection before having that conversation. Do not eliminate a man for leading with action instead of words. Watch whether he is moving toward a date. That is what matters right now.
 ```
 
-The first sentence duplicates the decode passing sign “Doesn’t ask what kind of relationship she wants”. The rest is coaching that is not in any filter — it tells her *not* to eliminate a man for it, which is the opposite of a criteria line. Stripping the sentence alone would mean rewording the paragraph, and rewording is forbidden. **Left in whole.**
+The first sentence duplicates the decode passing sign “Doesn’t ask what kind of relationship she wants”. The rest is coaching that is in no filter — it tells her *not* to eliminate a man for it. Cutting the sentence alone would mean rewording the paragraph. **Left in whole.**
 
 ### Q3. Stage 2 has one scope line but two files — still open
 
-Her scope lines say “Stage 2”; the decode layer splits Stage 2 into Phase 1 and Phase 2. I read “Stages 1 & 2” and “Stages 1 thru 3” as covering both phases, so those lessons went into both `L2` and `L3`. If a lesson was meant for Phase 1 only, tell me which and I will pull it from `L3`.
+Her scope lines say “Stage 2”; the decode layer splits it into Phase 1 and Phase 2. I read “Stages 1 & 2” and “Stages 1 thru 3” as covering both phases, so those lessons went into both `L2` and `L3`. If a lesson was meant for Phase 1 only, name it and I will pull it from `L3`.
+
+### Q4. Three framework lines left in, under her own rule — NEW, needs her call
+
+She asked for the framework and filter lines to go, but said not to rewrite her prose: where the phrase sits mid sentence and removing it would require rewriting, leave it and ask. These three are those cases.
+
+#### Line 54 — “these filters”
+
+```
+Here is the permission I want to give you with this slide: you are allowed to swipe left immediately. You do not need to give every man a chance. You do not need to feel guilty for having standards. The right man — the man who is already yours — is not going to be eliminated by these filters. He is going to sail right through them.
+```
+
+Deleting the sentence that contains the phrase leaves the very next sentence stranded: “He is going to sail right through them.” — “them” has nothing left to refer to. Deleting **both** sentences would read cleanly and end the paragraph on “You do not need to feel guilty for having standards.” That is a bigger cut than her rule authorises, so I have not made it. Say the word and I will.
+
+#### Line 74 — “this filter”
+
+```
+Passing this filter is not a green light.
+```
+
+The whole paragraph is this one sentence, and the paragraph after it opens “It is simply the absence of red flags at the profile level.” Delete this and “It” refers to nothing. The fix would be rewriting the next paragraph, which is forbidden.
+
+#### Line 150 — “it filters for men”
+
+```
+Choose two to three apps and start completely clean. The only app I do not recommend is Tinder — everything else is on the table. And once you build your profile, verify it. Verification signals immediately that you are a real, serious woman — and it filters for men who are doing the same. Small step. Big signal.
+```
+
+Here “filters” is an ordinary verb about profile verification, not a reference to the decode filters, and it sits mid sentence. **My recommendation is to keep it.** Deleting the sentence would also lose “Verification signals immediately that you are a real, serious woman”, which is coaching, not machinery.
 
 ---
 
-## 3. Flagged, not fixed — lessons that soften a position the filters take hard
+## 4. Lessons that soften a position the filters take hard
 
-The spec says to list these and not resolve them. Each is still in the lesson files, unchanged. These are the places where a lesson invites patience or a second look at behaviour a filter treats as an automatic fail — the combination that produces hedging.
+Seven were flagged. Her decisions 1 to 4 resolved four of them. Three are still in the lesson files, unchanged, and still contradict a filter.
 
-### SLIDE 2 — HEALTHY VERSUS UNHEALTHY PULLING AWAY
+| Flagged slide | Status |
+| --- | --- |
+| SLIDE 2 — HEALTHY VERSUS UNHEALTHY PULLING AWAY | Resolved — she rewrote the ending, section 2.1 |
+| SLIDE 4 — HIS ENERGY FEELS DIFFERENT | Resolved — cut, section 1.3 |
+| SLIDE 10 — HE RECOVERED | Resolved — cut, section 1.3 |
+| SLIDE 4 — green-flag coaching | Resolved — cut, section 1.3 |
+| SLIDE 3 — HE WENT QUIET... AND NOW HE'S BACK | **Still open** |
+| SLIDE 6 — TWO MONTHS... AND NO MENTION OF EXCLUSIVITY | **Still open** |
+| SLIDE 8 — WHAT'S ACTUALLY A RED FLAG? | **Still open** |
 
-- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 757
-- Why it is flagged: The Courtship Pace filter fails a man who goes quiet or stalls between dates. This slide tells her a day or two of quiet is not a problem and she should let him come back.
-
-```
-Because men do pull back during courtship.
-And that isn't automatically a problem.
-He simply took a moment before leaning back in.
-You don't need to fix that.
-```
+The three still open, in full:
 
 ### SLIDE 3 — HE WENT QUIET... AND NOW HE'S BACK
 
 - Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 813
-- Why it is flagged: “You don’t need to make it mean something bigger than it is” asks her to hold off on a conclusion the filter reaches immediately.
+- Why it is flagged: “You don’t need to make it mean something bigger than it is” asks her to hold off on a conclusion the Courtship Pace filter reaches immediately.
 
 ```
 If things have been steady...
@@ -274,21 +461,10 @@ You don't need to make it mean something bigger than it is.
 Keep observing.
 ```
 
-### SLIDE 4 — HIS ENERGY FEELS DIFFERENT... BUT HE'S STILL SHOWING UP
-
-- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 861
-- Why it is flagged: Directs her to distrust her own read when nothing observable has changed. The filters decode observable behaviour only, so this cuts across the method rather than the verdict.
-
-```
-And I want you to be really honest here.
-How many times have you decided something changed...
-Before anything actually changed?
-```
-
 ### SLIDE 6 — TWO MONTHS... AND NO MENTION OF EXCLUSIVITY
 
 - Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 935
-- Why it is flagged: “Two months? I’m not worried.” This is the strongest one. It supplies a defence for exactly the situation Stage 2 Phase 2 exists to fail, and it is the answer a woman pushing back would want quoted at her.
+- Why it is flagged: “Two months? I’m not worried.” The strongest one remaining. It supplies a defence for exactly the situation Stage 2 Phase 2 exists to fail, and it is the line a woman pushing back would want quoted at her.
 
 ```
 Two months?
@@ -309,49 +485,20 @@ But if something violates one of your non-negotiables...
 Don't negotiate with yourself.
 ```
 
-### SLIDE 10 — HE RECOVERED
-
-- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 1039
-- Why it is flagged: Introduces recovery from a failing behaviour. The decode filters are binary and have no recovery path, so a verdict and this lesson can contradict each other outright.
-
-```
-If he misses the mark...
-Feels your standard...
-Adjusts...
-And never repeats it...
-That's growth.
-Receive it.
-```
-
-### SLIDE 4 — the green-flag coaching kept after the strip
-
-- Lesson: Communication During Stage 1 Through Stage 2 Phase 1  ·  Appears in: L1, L2  ·  Source paragraph 332
-- Why it is flagged: “So you give space for that… you let him reveal himself over time.” The spec told me to keep this prose, and I did. Noting it because it sits directly under a communication filter that decides on first contact.
-
-```
-So you give space for that.
-Not unlimited time. Not emotional investment. But space.
-You let him reveal himself through how he communicates over time. Through whether his words match his actions. Through whether he moves things forward.
-```
-
 ---
 
-## 4. Flagged, not fixed — lines that name a framework, a filter, or the Decoder
+## 5. Framework, filter and Decoder language
 
-These break the instructions when read aloud, because the decode layer is not supposed to cite a source. All are still in the lesson files, unchanged.
+Her decision: **keep every Marriage Blueprint mention** — it is her product term — and remove the other two groups.
+
+### 5.1 Kept — Marriage Blueprint, her product term
+
+Ten mentions, all untouched. `Marriage Blueprint` was also added to the permitted names in `courtship-decoder-instructions.md`, so the Decoder may now say it out loud. See section 7.
 
 | Line | Appears in | Her text |
 | --- | --- | --- |
-| 54 | L1 | …ho is already yours — is not going to be eliminated by these filters. He is going to sail right through them. |
-| 74 | L1 | Passing this filter is not a green light. |
-| 98 | L1 | Use the Courtship Decoder anytime a profile leaves you uncertain — it will walk you through the filter in real time. |
-| 114 | L1 | Then pull out your Marriage Blueprint — the one you built in an earlier lesson — and look at the values you outl… |
-| 146 | L1 | …t version of you. A version that was operating without this framework, without this identity, without the clarity you have right now. The men yo… |
-| 150 | L1 | …s immediately that you are a real, serious woman — and it filters for men who are doing the same. Small step. Big signal. |
-| 296 | L1, L2, L3 | SLIDE 3 — THE HEART OF THE FRAMEWORK |
-| 298 | L1, L2, L3 | What I am about to give you is the heart of the High-League Courtship framework. This is High-League Positioning for Stages 1 and 2. And I need you to und… |
-| 305 | L1, L2, L3 | …ignment beginning to show up with your values and your Marriage Blueprint. Here is what that looks like per stage: Stage 1: Access is earned if he p… |
-| 311 | L1, L2, L3 | …. This is the overriding positioning across the entire High-League Courtship framework — and it applies fully in Stages 1 and 2. One note: if a man asks for excl… |
+| 114 | L1 | Then pull out your Marriage Blueprint — the one you built in an earlier lesson — and look at the values you… |
+| 305 | L1, L2, L3 | …o show up with your values and your Marriage Blueprint. Here is what that looks like per stage: Stage 1: Access is earned if… |
 | 435 | L1, L2, L3, L4 | This is where you come back to your Marriage Blueprint. |
 | 621 | L1, L2, L3, L4 | Your Marriage Blueprint gives you structure. |
 | 698 | L1, L2, L3, L4 | Your Marriage Blueprint isn't something you wrote once and forgot about. |
@@ -359,48 +506,84 @@ These break the instructions when read aloud, because the decode layer is not su
 | 1015 | L1, L2, L3, L4 | Don't soften your Blueprint because you like him. |
 | 1181 | L1, L2, L3, L4, L5 | Your Marriage Blueprint is already written. |
 | 1268 | L1, L2, L3, L4, L5 | Your Marriage Blueprint. |
-| 1517 | L3 | Only then does this framework activate. |
-| 2870 | L5 | It's one of the strongest parts of this entire framework because it requires him to step into masculine leadership and be seen by other men. |
-| 3130 | L5 | When I first learned this framework, I felt the same way. |
-| 3151 | L1, L2, L3, L4, L5 | …woman whose presence commands devotion.* You take your Marriage Blueprint and you pull from it. You write your own affirmations in the present tense… |
-| 3165 | L1, L2, L3, L4, L5 | …k away from. So you were left reading the signals with no framework to read them through. |
-| 3168 | L1, L2, L3, L4, L5 | …dicated training. What we are doing here is giving you the framework so that when we get to discernment, you already understand the structure i… |
-| 3213 | L1, L2, L3, L4, L5 | …incompatibilities — you continue. You observe. You use the Courtship Decoder for anything that feels unclear. |
+| 3151 | L1, L2, L3, L4, L5 | …e commands devotion.* You take your Marriage Blueprint and you pull from it. You write your own affirmations in the present … |
 
-The two that quote the product by name are lines 98 and 3213 — both say “use the Courtship Decoder”. Those are the ones that will read strangest coming out of the Decoder itself.
+### 5.2 Removed
 
-One further hit, line 2474, sat inside the Stage 4 copy removed in section 1.2 and is gone from the output. The identical sentence survives at line 2870 and is listed above.
+| Line | Phrase | How | Section |
+| --- | --- | --- | --- |
+| 98 | the Courtship Decoder | whole paragraph | 1.3 |
+| 296 | THE HEART OF THE FRAMEWORK | whole paragraph (a heading) | 1.3 |
+| 1517 | this framework | whole paragraph | 1.3 |
+| 2870 | this entire framework | whole paragraph | 1.3 |
+| 3130 | this framework | whole paragraph | 1.3 |
+| 146 | this framework | sentence lifted out | 2.2 |
+| 298 | High-League Courtship framework | sentence lifted out | 2.2 |
+| 311 | High-League Courtship framework | sentence lifted out | 2.2 |
+| 3165 | no framework | sentence lifted out | 2.2 |
+| 3168 | the framework | sentence lifted out | 2.2 |
+| 3213 | the Courtship Decoder | sentence lifted out | 2.2 |
+
+Both lines telling her to use the Courtship Decoder — 98 and 3213 — are gone. Line 2474 carried the same sentence as 2870 and sat inside the Stage 4 copy deleted in section 1.2, so that sentence is gone from the layer entirely.
+
+### 5.3 Left in, raised as questions
+
+Lines 54, 74 and 150. See Q4 in section 3.
 
 ---
 
-## 5. Stage scope
+## 6. Stage scope
 
 ### `STAGE 4 - BUT ALSO INFO FOR ANY STAGE WHERE A WOMEN HAS SEX WITH A MAN-` — DECIDED
 
-Lesson: SEXUAL ACCESS IS SACRED (source paragraph 3246).
-
-The heading names Stage 4 and then widens to any stage. **Her decision: it stays in all five files.** That is where it already was, so no change was made. Settled.
+Lesson: SEXUAL ACCESS IS SACRED (source paragraph 3246). Her decision: it stays in all five files. That is where it already was, so nothing changed. Settled.
 
 ### Two headings that read as titles, not scope lines
 
-Paragraphs 286 (`High-League Positioning — Stages 1 & 2`) and 321 (`Communication During Stage 1 Through Stage 2 Phase 1`) carry their scope inside the lesson title rather than on a separate line. I read them as scope lines. Both are unambiguous once read; noting them so you know they were interpreted rather than matched.
+Paragraphs 286 (`High-League Positioning — Stages 1 & 2`) and 321 (`Communication During Stage 1 Through Stage 2 Phase 1`) carry their scope inside the lesson title rather than on a separate line. I read them as scope lines — interpreted, not matched.
 
 ---
 
-## 6. Verification
+## 7. Change to the instructions file
 
-Re-run after the two decisions in sections 1.2 and 5 were applied, and again after `03-stage-2-phase-2.md` was replaced with the revised version that merges the duplicate “Increasing Investment” filter into Filter 1, taking that file from 5 filters to 4.
+Her decision 6: add `Marriage Blueprint` to the names the Decoder is allowed to say out loud, alongside the four already there.
 
-**The revised decode file changed nothing in this report or in the lesson files.** Two reasons, both checked rather than assumed. The lesson files are built only from `FRAMEWORK_LESSONS.docx`, mapped by her own stage scope lines, so no lesson text is derived from a decode file — rebuilding all five produced byte-identical output. And every filter cited by the strip mapping in section 1.1 lives in `01-stage-1-before-first-date.md`, which is untouched; nothing here ever cited a Stage 2 Phase 2 filter, so the deleted Filter 3 has no reference to correct.
+**Before:**
+
+```
+You may name Date To The Ring, High League Positioning, the No Girlfriend Standard, and the Vetting Process. Those are hers. Everything else about how you work stays invisible.
+```
+
+**After:**
+
+```
+You may name Date To The Ring, High League Positioning, the No Girlfriend Standard, the Vetting Process, and the Marriage Blueprint. Those are hers. Everything else about how you work stays invisible.
+```
+
+`courtship-decoder-instructions.md` is now **6,507 characters**, against the 8,000 limit. It was 6,483 before.
+
+`Blueprint` is not on the forbidden-words list in that file, so the two rules do not contradict each other.
+
+---
+
+## 8. Verification
+
+Re-run after all six decisions were applied.
 
 | Check | Result |
 | --- | --- |
-| Every source content line appears in at least one output file, except those listed in section 1.1 | Pass — 0 missing |
-| The lesson removed in section 1.2 cost no unique content | Pass — 0 of its content lines are absent from the output |
+| Every unedited source paragraph appears in at least one output file | Pass |
+| Every removed paragraph is gone from the lesson it came from | Pass |
+| Each of the six lifted sentences is gone from every output file | Pass — 6 of 6 |
+| The rest of each of those six paragraphs survives verbatim | Pass — 6 of 6 |
+| Her rewritten ending appears exactly as she wrote it | Pass — both lines |
+| Every Marriage Blueprint mention survives | Pass — 10 of 10 |
+| The three lines left as questions are still present | Pass — 3 of 3 |
+| The lesson removed in section 1.2 cost no unique content | Pass |
 | No output file contains a decode criteria list | Pass |
-| Words in = words out, plus duplication, minus the strip | Pass — 37,982 in, 904 stripped, 96,853 written, 2.61x duplication |
-| Every lesson block carries the literal string `FOLLOW UP` | Pass — 46 blocks |
+| Every lesson block carries the literal string `FOLLOW UP` | Pass — 46 blocks, 46 USE lines |
 | The string `FOLLOW UP` appears nowhere in the decode files | Pass |
 | Every decode filter cited in section 1.1 still exists under that exact heading | Pass — 5 of 5 |
-| Rebuilding all five lesson files against the revised decode files changes nothing | Pass — 5 of 5 byte-identical |
+| `courtship-decoder-instructions.md` stays under 8,000 characters | Pass — 6,507 |
+| Word count reconciles | Pass — 96,227 written = 96,227 expected |
 
