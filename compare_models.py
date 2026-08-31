@@ -353,6 +353,14 @@ def list_models(env: dict, show_all: bool) -> int:
 # Running a case
 # ---------------------------------------------------------------------------
 
+def show_path(path: Path) -> str:
+    """Relative to the project when it sits inside it, absolute otherwise."""
+    try:
+        return str(path.relative_to(HERE))
+    except ValueError:
+        return str(path)
+
+
 def run_case(test: TestCase, provider: Provider, dry_run: bool) -> dict:
     """One fresh conversation for this test against this provider."""
     system_prompt = build_system_prompt(test.stage_file)
@@ -610,7 +618,7 @@ def main() -> int:
 
             path = case_dir / f"candidate-{letter}.md"
             path.write_text(text, encoding="utf-8")
-            print(f"      -> {path.relative_to(HERE)}  "
+            print(f"      -> {show_path(path)}  "
                   f"({result['total_chars']:,} chars, {result['seconds']}s)")
             summary_rows.append((test.id, letter.upper(),
                                  f"{result['total_chars']:,}",
@@ -638,7 +646,7 @@ def main() -> int:
 
     print(f"\n{len(tests)} case(s) x {len(providers)} provider(s). "
           f"Candidates in {outdir}")
-    print(f"Mapping written to {key_path.relative_to(HERE)} -- read the "
+    print(f"Mapping written to {show_path(key_path)} -- read the "
           "transcripts before you open it.")
     if leaks:
         print(f"{len(leaks)} self-identification warning(s). See {KEY_FILE}.")

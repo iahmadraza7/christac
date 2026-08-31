@@ -133,18 +133,28 @@ TESTS: list[TestCase] = [
         stage_file="02-stage-2-phase-1.md",
         plan_ref="T6 — Stage 2 phase separation (2 dates)",
         note="Same behavior as T6b at a different date count. Compare the two "
-             "transcripts side by side.",
+             "transcripts side by side. The plan's wording never said how long "
+             "it had been since the last date, so every model correctly asked "
+             "instead of deciding, and the phase comparison produced questions "
+             "rather than two verdicts. The gap is now filled; nothing else "
+             "differs between T6a and T6b except the date count.",
+        authored_turns=[1],
         turns=[
-            "Stage 2. We've been on 2 dates. He texts me every day but hasn't planned the next one."
+            "Stage 2. We've been on 2 dates. He texts me every day but it's been "
+            "two weeks since the last one and he hasn't planned another."
         ],
     ),
     TestCase(
         id="T6b",
         stage_file="03-stage-2-phase-2.md",
         plan_ref="T6 — Stage 2 phase separation (6 dates)",
-        note="Same behavior as T6a at a different date count.",
+        note="Same behavior as T6a at a different date count. Carries the same "
+             "added detail as T6a for the same reason; the only difference "
+             "between the two cases is the date count.",
+        authored_turns=[1],
         turns=[
-            "Stage 2. We've been on 6 dates. He texts me every day but hasn't planned the next one."
+            "Stage 2. We've been on 6 dates. He texts me every day but it's been "
+            "two weeks since the last one and he hasn't planned another."
         ],
     ),
     TestCase(
@@ -182,12 +192,17 @@ TESTS: list[TestCase] = [
         note="The plan says 'any completed decode'. This one is authored to "
              "run a Stage 3 decode to completion so the ending is what you're "
              "reading. Check that it stops after the next step and offers to "
-             "decode another man.",
+             "decode another man. The earlier wording said she delivered the "
+             "No-Girlfriend Standard and that he had been her boyfriend since, "
+             "which contradicts the methodology: she does not become a "
+             "girlfriend. A model caught that and asked about it, correctly. "
+             "The scenario now holds the standard instead of breaking it.",
         authored_turns=[1],
         turns=[
-            # AUTHORED: any decode that reaches a verdict works here.
-            "Stage 3. We had the no girlfriend standard conversation five months ago and "
-            "he's been my boyfriend since. He talks about our future constantly but he's "
+            # AUTHORED: any decode that reaches a verdict works here. It must not
+            # contradict the methodology, or the right response is a question.
+            "Stage 3. I gave him the No-Girlfriend Standard five months ago and "
+            "he's still pursuing me. He talks about our future constantly but he's "
             "never brought up rings or timelines, and when I asked about meeting his "
             "family at Christmas he said we'd figure it out later."
         ],

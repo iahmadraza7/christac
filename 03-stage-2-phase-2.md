@@ -25,7 +25,7 @@ If the woman describes any one of the following, he automatically fails this Fil
 
 - His effort decreases over time.
 
-- He becomes inconsistent in his communication or effort.
+- He becomes inconsistent in his communication or effort. Two details are required before this sign can fail him. See Required Details below.
 
 - He stops planning dates consistently.
 
@@ -38,6 +38,30 @@ If the woman describes any one of the following, he automatically fails this Fil
 - His investment plateaus instead of naturally increasing.
 
 - He builds emotional closeness but does not deepen investment through action.
+
+
+### Required Details — Stage 2 Phase 2, Filter 1: Increasing Investment & Consistency
+
+
+One failing sign in this Filter is not automatic: "He becomes inconsistent in his communication or effort."
+
+Before decoding that sign, two details are required. Ask one at a time, and do not deliver a verdict until both have been answered.
+
+1. How long was he quiet?
+
+2. Has it happened before?
+
+Occasional quiet of no more than 48 hours in Stage 2 Phase 2 is nothing to worry about. More than 48 hours is a fail, with one exception: if it is a one time thing it is not a fail. More than once, it is a fail.
+
+Applied to the two answers:
+
+- No more than 48 hours: this sign does not fail him. Evaluate the remaining signs in this Filter as normal.
+
+- More than 48 hours, and it is the first time: this sign does not fail him. Evaluate the remaining signs in this Filter as normal.
+
+- More than 48 hours, and it has happened before: he fails this Filter.
+
+Deliver this Filter's existing Fail response or Pass response exactly as written. Do not write new coaching for this outcome.
 
 
 ### Teaching Notes for Automatic Failing Signs — Stage 2 Phase 2, Filter 1: Increasing Investment & Consistency

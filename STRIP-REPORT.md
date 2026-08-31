@@ -381,6 +381,80 @@ You use the Courtship Decoder for anything that feels unclear.
 Deep marriage conversations. Full certainty about long-term compatibility. That is not what this phase is for. If there are clear dealbreakers surfacing — yes, those eliminate him. But if a man is leading well, showing up consistently, and there are no glaring incompatibilities — you continue. You observe.
 ```
 
+### 2.3 Decision 2 — she set the number for what counts as quiet
+
+Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Affects: L1, L2, L3, L4  ·  Source paragraph 825
+
+The slide left “one isolated moment” undefined. Her decision: quiet means more than two days. Every word she wrote is kept; the number is added to the phrase she pointed at.
+
+**Before:**
+
+```
+And this is one isolated moment...
+```
+
+**After:**
+
+```
+And this is one isolated moment of more than two days...
+```
+
+This now matches the 48-hour rule she set for the decode filter in section 8. The lesson and the filter state the same threshold.
+
+### 2.4 Decision 3 — SLIDE 8 reordered so the non-negotiables land first
+
+Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Affects: L1, L2, L3, L4  ·  Source paragraphs 1001–1017
+
+Reorder only. Not one word changed, none added, none removed — checked line by line.
+
+**Order before:**
+
+```
+1001: SLIDE 8 — WHAT'S ACTUALLY A RED FLAG?
+1002: Not every uncomfortable feeling is a red flag.
+1003: And not every red flag feels dramatic.
+1004: Come back to your Marriage Blueprint.
+1005: If a man is consistently leading...
+1006: Investing...
+1007: Showing character...
+1008: Aligning with your values...
+1009: Don't go looking for reasons to disqualify him because being chosen suddenly feels vulnerable.
+1010: Ask yourself honestly...
+1011: Am I discerning...
+1012: Or am I protecting myself?
+1013: But if something violates one of your non-negotiables...
+1014: Don't negotiate with yourself.
+1015: Don't soften your Blueprint because you like him.
+1016: Discernment isn't about finding perfection.
+1017: It's about recognizing alignment.
+```
+
+**Order after:**
+
+```
+1001: SLIDE 8 — WHAT'S ACTUALLY A RED FLAG?
+1002: Not every uncomfortable feeling is a red flag.
+1003: And not every red flag feels dramatic.
+1004: Come back to your Marriage Blueprint.
+1013: But if something violates one of your non-negotiables...
+1014: Don't negotiate with yourself.
+1015: Don't soften your Blueprint because you like him.
+1005: If a man is consistently leading...
+1006: Investing...
+1007: Showing character...
+1008: Aligning with your values...
+1009: Don't go looking for reasons to disqualify him because being chosen suddenly feels vulnerable.
+1010: Ask yourself honestly...
+1011: Am I discerning...
+1012: Or am I protecting myself?
+1016: Discernment isn't about finding perfection.
+1017: It's about recognizing alignment.
+```
+
+Her three non-negotiable lines (1013–1015) now sit ahead of “Don’t go looking for reasons to disqualify him”, which is what she asked for. I placed them before the conditional that runs 1005–1009 rather than inside it, so that conditional is not split in half.
+
+**Worth her eye.** “But if something violates one of your non-negotiables…” now follows “Come back to your Marriage Blueprint.” rather than the permissive lines it used to contrast with, so the “But” has a weaker hinge. Left as it fell: fixing it would mean rewording, and she asked for a reorder only.
+
 ---
 
 ## 3. Questions
@@ -435,7 +509,7 @@ Here “filters” is an ordinary verb about profile verification, not a referen
 
 ## 4. Lessons that soften a position the filters take hard
 
-Seven were flagged. Her decisions 1 to 4 resolved four of them. Three are still in the lesson files, unchanged, and still contradict a filter.
+Seven were flagged. Her decisions have now resolved six. One is still in the lesson files, unchanged, and still contradicts a filter.
 
 | Flagged slide | Status |
 | --- | --- |
@@ -443,23 +517,11 @@ Seven were flagged. Her decisions 1 to 4 resolved four of them. Three are still 
 | SLIDE 4 — HIS ENERGY FEELS DIFFERENT | Resolved — cut, section 1.3 |
 | SLIDE 10 — HE RECOVERED | Resolved — cut, section 1.3 |
 | SLIDE 4 — green-flag coaching | Resolved — cut, section 1.3 |
-| SLIDE 3 — HE WENT QUIET... AND NOW HE'S BACK | **Still open** |
+| SLIDE 3 — HE WENT QUIET... AND NOW HE'S BACK | Resolved — she set the number, sections 2.3 and 8 |
+| SLIDE 8 — WHAT'S ACTUALLY A RED FLAG? | Resolved — reordered, section 2.4 |
 | SLIDE 6 — TWO MONTHS... AND NO MENTION OF EXCLUSIVITY | **Still open** |
-| SLIDE 8 — WHAT'S ACTUALLY A RED FLAG? | **Still open** |
 
-The three still open, in full:
-
-### SLIDE 3 — HE WENT QUIET... AND NOW HE'S BACK
-
-- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 813
-- Why it is flagged: “You don’t need to make it mean something bigger than it is” asks her to hold off on a conclusion the Courtship Pace filter reaches immediately.
-
-```
-If things have been steady...
-And this is one isolated moment...
-You don't need to make it mean something bigger than it is.
-Keep observing.
-```
+The one still open, in full:
 
 ### SLIDE 6 — TWO MONTHS... AND NO MENTION OF EXCLUSIVITY
 
@@ -471,18 +533,6 @@ Two months?
 I'm not worried.
 Not if he's consistently showing up.
 Don't confuse patience with passivity.
-```
-
-### SLIDE 8 — WHAT'S ACTUALLY A RED FLAG?
-
-- Lesson: Courtship Protocol: Pulling Away, Time Wasters & Red Flags  ·  Appears in: L1, L2, L3, L4  ·  Source paragraph 1001
-- Why it is flagged: Cuts both ways in one slide: “don’t go looking for reasons to disqualify him”, then “don’t negotiate with yourself”. The first half is usable as a softener.
-
-```
-Not every uncomfortable feeling is a red flag.
-Don't go looking for reasons to disqualify him because being chosen suddenly feels vulnerable.
-But if something violates one of your non-negotiables...
-Don't negotiate with yourself.
 ```
 
 ---
@@ -544,9 +594,11 @@ Paragraphs 286 (`High-League Positioning — Stages 1 & 2`) and 321 (`Communicat
 
 ---
 
-## 7. Change to the instructions file
+## 7. Changes to the instructions file
 
-Her decision 6: add `Marriage Blueprint` to the names the Decoder is allowed to say out loud, alongside the four already there.
+### 7.1 Marriage Blueprint added to the permitted names
+
+Her earlier decision 6: add `Marriage Blueprint` to the names the Decoder is allowed to say out loud, alongside the four already there.
 
 **Before:**
 
@@ -560,15 +612,59 @@ You may name Date To The Ring, High League Positioning, the No Girlfriend Standa
 You may name Date To The Ring, High League Positioning, the No Girlfriend Standard, the Vetting Process, and the Marriage Blueprint. Those are hers. Everything else about how you work stays invisible.
 ```
 
-`courtship-decoder-instructions.md` is now **6,507 characters**, against the 8,000 limit. It was 6,483 before.
+`courtship-decoder-instructions.md` is now **6,887 characters**, against the 8,000 limit. It was 6,483 before.
 
 `Blueprint` is not on the forbidden-words list in that file, so the two rules do not contradict each other.
 
+### 7.2 A new rule on texting in Stage 1 and Stage 2 Phase 1
+
+Her words, added to the DECODING section, reproduced exactly:
+
+```
+In Stage 1 and Stage 2 Phase 1, inconsistent texting or calling says nothing about his readiness for marriage. Do not treat it as a signal either way. What matters in these stages is whether he is intentionally moving toward seeing her in real life. If she raises it, acknowledge it can matter to her as a desire, then bring her back to what he is doing about meeting in person.
+```
+
+**Worth her eye — a tension I have flagged rather than resolved.** This rule says texting says nothing either way in those two stages. The Stage 1 Courtship Pace filter in `01-stage-1-before-first-date.md` does treat texting as a signal: it fails a man for “Texts every day, all day”, “Responds almost immediately to every text”, “Double or triple texts when you have not responded” and several more. Those are about texting *too much*, and her new rule is about texting *inconsistently*, so they do not collide on the same behaviour — but a model reading the new rule could take it as licence to ignore that filter. If she wants them squared off, that is a decode-file change and her call.
+
+Stage 2 Phase 1 has no conflict: its failing signs are about effort and real-life progression, which is exactly what her rule points at.
+
 ---
 
-## 8. Verification
+## 8. Change to a decode file
 
-Re-run after all six decisions were applied.
+### Stage 2 Phase 2, Filter 1 — one failing sign is now gated behind two questions
+
+Her decision 1. The sign “He becomes inconsistent in his communication or effort” used to fail a man with nothing asked. It now requires two answers first.
+
+**The failing sign, before:**
+
+```
+- He becomes inconsistent in his communication or effort.
+```
+
+**And after:**
+
+```
+- He becomes inconsistent in his communication or effort. Two details are required before this sign can fail him. See Required Details below.
+```
+
+**The new section added to that filter**, following the file's own heading pattern. Her rule appears in it word for word:
+
+```
+Occasional quiet of no more than 48 hours in Stage 2 Phase 2 is nothing to worry about. More than 48 hours is a fail, with one exception: if it is a one time thing it is not a fail. More than once, it is a fail.
+```
+
+The two questions are asked one at a time, and no verdict is delivered until both are answered, which matches the existing rule in the instructions file: “One question at a time, never two.” No new coaching was written — the section routes every outcome to the filter's existing Fail response or Pass response.
+
+Where the sign does not fail him, the remaining signs in the filter are still evaluated as normal. That is mechanical, not coaching: her rule governs this one sign, not the whole filter.
+
+The file still has 4 filters and 8 `DELIVER AS WRITTEN` blocks, so the chat service's verdict detection is unaffected.
+
+---
+
+## 9. Verification
+
+Re-run after all ten decisions were applied — the six earlier ones and the four in sections 2.3, 2.4, 7.2 and 8.
 
 | Check | Result |
 | --- | --- |
@@ -584,6 +680,12 @@ Re-run after all six decisions were applied.
 | Every lesson block carries the literal string `FOLLOW UP` | Pass — 46 blocks, 46 USE lines |
 | The string `FOLLOW UP` appears nowhere in the decode files | Pass |
 | Every decode filter cited in section 1.1 still exists under that exact heading | Pass — 5 of 5 |
-| `courtship-decoder-instructions.md` stays under 8,000 characters | Pass — 6,507 |
-| Word count reconciles | Pass — 96,227 written = 96,227 expected |
+| `courtship-decoder-instructions.md` stays under 8,000 characters | Pass — 6,887 |
+| Decision 2: the quiet threshold is stated, and every word of hers is kept | Pass |
+| Decision 3: the non-negotiable lines now precede the disqualify line | Pass |
+| Decision 3: no line of that slide added, lost or reworded | Pass — 17 of 17 |
+| Decision 1: the gated filter still has 4 filters and 8 verdict blocks | Pass |
+| Decision 4: her new rule is in the instructions, word for word | Pass |
+| Every delivered file uses LF line endings, like her decode files | Pass |
+| Word count reconciles | Pass — 96,247 written = 96,247 expected |
 

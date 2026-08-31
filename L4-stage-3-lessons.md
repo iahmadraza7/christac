@@ -872,7 +872,7 @@ Those are two completely different situations.
 
 If things have been steady...
 
-And this is one isolated moment...
+And this is one isolated moment of more than two days...
 
 You don't need to make it mean something bigger than it is.
 
@@ -1216,6 +1216,12 @@ And not every red flag feels dramatic.
 
 Come back to your Marriage Blueprint.
 
+But if something violates one of your non-negotiables...
+
+Don't negotiate with yourself.
+
+Don't soften your Blueprint because you like him.
+
 If a man is consistently leading...
 
 Investing...
@@ -1231,12 +1237,6 @@ Ask yourself honestly...
 Am I discerning...
 
 Or am I protecting myself?
-
-But if something violates one of your non-negotiables...
-
-Don't negotiate with yourself.
-
-Don't soften your Blueprint because you like him.
 
 Discernment isn't about finding perfection.
 
