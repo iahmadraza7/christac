@@ -4,15 +4,24 @@ Source: `FRAMEWORK_LESSONS.docx` (37,982 words). Output: `L1`–`L5` lesson file
 
 Nothing here was reworded. This report lists every line removed from her document, every line I was not confident enough to remove, and every line flagged but left alone.
 
-**Totals.** 13 paragraphs removed, 904 words. Everything else appears in at least one lesson file. Cross-stage lessons are duplicated into each stage they apply to, as the spec requires, which is why 37,078 kept words become 99,154 written words (2.67x).
+**Totals.** Two kinds of removal, 275 content paragraphs in all.
+
+| Removal | Paragraphs | Words | Content lost? |
+| --- | --- | --- | --- |
+| Duplicated decode criteria (section 1.1) | 13 | 904 | Yes — deliberately. The decode files already carry every one of these rules. |
+| A lesson the source contains twice (section 1.2) | 262 | 2,301 | No. Every content line also appears in the surviving copy, checked line by line. |
+
+Everything else appears in at least one lesson file. Cross-stage lessons are duplicated into each stage they apply to, as the spec requires, which is why 37,078 kept words become 96,853 written words (2.61x).
 
 ---
 
-## 1. Removed — duplicated decode criteria
+## 1. Removed
+
+### 1.1 Duplicated decode criteria
 
 These are the enumerated criteria lists named in the spec. The prose teaching around them was kept. Line numbers are paragraph positions in the source document.
 
-### SLIDE 3 — AUTOMATIC FAILS — SWIPE LEFT IMMEDIATELY
+#### SLIDE 3 — AUTOMATIC FAILS — SWIPE LEFT IMMEDIATELY
 
 - Lesson: How to Spot Husband Material on the Apps — and Avoid the Time Wasters (Stage 1)
 - Affects: `L1-stage-1-lessons.md`
@@ -80,9 +89,7 @@ Already covered by: `01-stage-1-before-first-date.md` → Automatic Failing Sign
 - Line 38: That ends here. You are not here to see potential. You are here to observe what is already present. And what is present on his profile is already data…
 - Line 54: Here is the permission I want to give you with this slide: you are allowed to swipe left immediately. You do not need to give every man a chance. You …
 
----
-
-### SLIDE 4 — PASSING SIGNS — WORTH SWIPING RIGHT
+#### SLIDE 4 — PASSING SIGNS — WORTH SWIPING RIGHT
 
 - Lesson: How to Spot Husband Material on the Apps — and Avoid the Time Wasters (Stage 1)
 - Affects: `L1-stage-1-lessons.md`
@@ -117,9 +124,7 @@ Already covered by: `01-stage-1-before-first-date.md` → Passing Signs — Stag
 - Line 60: None of the automatic fails are present. And you are seeing some of the following.
 - Line 68: He has not asked you on the app what kind of relationship you are looking for before the first date. I want to name this specifically because it trips…
 
----
-
-### SLIDE 3 — AUTOMATIC FAILS
+#### SLIDE 3 — AUTOMATIC FAILS
 
 - Lesson: Communication During Stage 1 Through Stage 2 Phase 1
 - Affects: `L1-stage-1-lessons.md`, `L2-stage-2-phase-1-lessons.md`
@@ -143,9 +148,7 @@ Already covered by: `01-stage-1-before-first-date.md` → Automatic Failing Sign
 
 **Kept from this slide: nothing.** The heading and its single body paragraph were both criteria, so the whole slide is gone. This is the only slide the strip removes entirely — flagging it because it is a bigger cut than the others.
 
----
-
-### SLIDE 4 — PASSING SIGNS AND THE GREEN FLAGS WOMEN MISS
+#### SLIDE 4 — PASSING SIGNS AND THE GREEN FLAGS WOMEN MISS
 
 - Lesson: Communication During Stage 1 Through Stage 2 Phase 1
 - Affects: `L1-stage-1-lessons.md`, `L2-stage-2-phase-1-lessons.md`
@@ -183,26 +186,51 @@ Already covered by: `01-stage-1-before-first-date.md` → Passing Signs — Stag
 
 ---
 
-## 2. Questions — not removed, because I was not certain
+### 1.2 A lesson the source contains twice
 
-The spec says to leave anything that is not clearly a duplicate and list it here instead. These are still in the lesson files.
+#### STAGE 4: HIGH LEAGUE POSITIONING — first of two copies
 
-### Q1. The Stage 4 positioning lesson appears twice in the source
+- Affects: `L5-stage-4-lessons.md`
+- Source paragraphs removed: 2301–2566 (262 content paragraphs, 2,301 words)
+- Surviving copy: paragraphs 2697–2968, still in `L5-stage-4-lessons.md`
 
-`STAGE 4: HIGH LEAGUE POSITIONING` occurs at paragraph 2301 and again at 2697. The two copies are 99.6% identical — the second is a superset, adding a closing `Lesson Summary` the first does not have.
+**Removed on the client's decision.** `STAGE 4: HIGH LEAGUE POSITIONING` appears twice in the source document. The two copies are 99.6% identical; the second is a superset, carrying a closing `Lesson Summary` the first does not have. Keeping both meant the Stage 4 file stated the same positioning rules twice, which is the condition the spec says muddies matching.
 
-Both copies are currently in `L5-stage-4-lessons.md`, one after the other. That means the Stage 4 file states the same positioning rules twice, which is the condition the spec says muddies matching — but removing a whole lesson is not a removal I will make without you.
+**No content was lost.** Every one of the 262 content paragraphs in the removed copy also appears in the surviving copy — checked paragraph by paragraph, 0 exceptions. The exact removed text is therefore still readable in `L5-stage-4-lessons.md`, which is why it is not re-quoted in full here.
 
-**Recommendation: delete the first copy (2301–2566) and keep the second (2697–2968),** since the second contains everything the first does plus the summary. Say the word and I will cut it. Deleting it removes 2,301 words and one duplicate block from `L5`.
+Opening of the removed copy (lines 2301–2302):
 
-The extra text the second copy has, that the first does not:
+```
+STAGE 4: HIGH LEAGUE POSITIONING
+Slide 1 — Welcome to Stage 4
+```
+
+Last paragraph removed (line 2565):
+
+```
+The engagement isn't where discernment ends. It's where discernment is completed.
+```
+
+What the surviving copy has that this one did not:
 
 ```
 Lesson Summary
 Engagement is not the time to abandon the positioning that created the relationship. Access is still earned. Your world unfolds intentionally. Speak from desire, not direction, so you preserve the polarity that brought you together. Hold your position all the way to the altar, because the way you got here is the way you build a lasting marriage.
 ```
 
-### Q2. One passing sign that carries real coaching with it
+---
+
+## 2. Questions
+
+The spec says to leave anything that is not clearly a duplicate and list it here instead.
+
+### Q1. The Stage 4 positioning lesson appears twice — DECIDED, actioned
+
+**Her decision: delete the first copy (paragraphs 2301–2566), keep the second (2697–2968).** Applied. `L5-stage-4-lessons.md` went from 7 blocks to 6, and from 88,941 to 75,057 characters. The removal is now recorded in section 1.2 alongside the others.
+
+This question is closed. Nothing further is needed on it.
+
+### Q2. One passing sign that carries real coaching with it — still open
 
 Line 68, in `SLIDE 4 — PASSING SIGNS — WORTH SWIPING RIGHT`:
 
@@ -212,7 +240,7 @@ He has not asked you on the app what kind of relationship you are looking for be
 
 The first sentence duplicates the decode passing sign “Doesn’t ask what kind of relationship she wants”. The rest is coaching that is not in any filter — it tells her *not* to eliminate a man for it, which is the opposite of a criteria line. Stripping the sentence alone would mean rewording the paragraph, and rewording is forbidden. **Left in whole.**
 
-### Q3. Stage 2 has one scope line but two files
+### Q3. Stage 2 has one scope line but two files — still open
 
 Her scope lines say “Stage 2”; the decode layer splits Stage 2 into Phase 1 and Phase 2. I read “Stages 1 & 2” and “Stages 1 thru 3” as covering both phases, so those lessons went into both `L2` and `L3`. If a lesson was meant for Phase 1 only, tell me which and I will pull it from `L3`.
 
@@ -332,7 +360,6 @@ These break the instructions when read aloud, because the decode layer is not su
 | 1181 | L1, L2, L3, L4, L5 | Your Marriage Blueprint is already written. |
 | 1268 | L1, L2, L3, L4, L5 | Your Marriage Blueprint. |
 | 1517 | L3 | Only then does this framework activate. |
-| 2474 | L5 | It's one of the strongest parts of this entire framework because it requires him to step into masculine leadership and be seen by other men. |
 | 2870 | L5 | It's one of the strongest parts of this entire framework because it requires him to step into masculine leadership and be seen by other men. |
 | 3130 | L5 | When I first learned this framework, I felt the same way. |
 | 3151 | L1, L2, L3, L4, L5 | …woman whose presence commands devotion.* You take your Marriage Blueprint and you pull from it. You write your own affirmations in the present tense… |
@@ -342,15 +369,17 @@ These break the instructions when read aloud, because the decode layer is not su
 
 The two that quote the product by name are lines 98 and 3213 — both say “use the Courtship Decoder”. Those are the ones that will read strangest coming out of the Decoder itself.
 
+One further hit, line 2474, sat inside the Stage 4 copy removed in section 1.2 and is gone from the output. The identical sentence survives at line 2870 and is listed above.
+
 ---
 
-## 5. Flagged — stage scope that is ambiguous from the heading
+## 5. Stage scope
 
-### `STAGE 4 - BUT ALSO INFO FOR ANY STAGE WHERE A WOMEN HAS SEX WITH A MAN-`
+### `STAGE 4 - BUT ALSO INFO FOR ANY STAGE WHERE A WOMEN HAS SEX WITH A MAN-` — DECIDED
 
 Lesson: SEXUAL ACCESS IS SACRED (source paragraph 3246).
 
-The heading names Stage 4 and then widens to any stage. I put it in **all five files**, because a lesson that applies wherever sex happens is useless if it is only reachable at Stage 4. That is a judgement, not something her heading settles. If you want it in `L5` only, that is a one-line change.
+The heading names Stage 4 and then widens to any stage. **Her decision: it stays in all five files.** That is where it already was, so no change was made. Settled.
 
 ### Two headings that read as titles, not scope lines
 
@@ -360,11 +389,18 @@ Paragraphs 286 (`High-League Positioning — Stages 1 & 2`) and 321 (`Communicat
 
 ## 6. Verification
 
+Re-run after the two decisions in sections 1.2 and 5 were applied, and again after `03-stage-2-phase-2.md` was replaced with the revised version that merges the duplicate “Increasing Investment” filter into Filter 1, taking that file from 5 filters to 4.
+
+**The revised decode file changed nothing in this report or in the lesson files.** Two reasons, both checked rather than assumed. The lesson files are built only from `FRAMEWORK_LESSONS.docx`, mapped by her own stage scope lines, so no lesson text is derived from a decode file — rebuilding all five produced byte-identical output. And every filter cited by the strip mapping in section 1.1 lives in `01-stage-1-before-first-date.md`, which is untouched; nothing here ever cited a Stage 2 Phase 2 filter, so the deleted Filter 3 has no reference to correct.
+
 | Check | Result |
 | --- | --- |
-| Every source content line appears in at least one output file, except those listed in section 1 | Pass — 0 missing |
+| Every source content line appears in at least one output file, except those listed in section 1.1 | Pass — 0 missing |
+| The lesson removed in section 1.2 cost no unique content | Pass — 0 of its content lines are absent from the output |
 | No output file contains a decode criteria list | Pass |
-| Words in = words out, plus duplication, minus the strip | Pass — 37,982 in, 904 stripped, 99,154 written, 2.67x duplication |
-| Every lesson block carries the literal string `FOLLOW UP` | Pass — 47 blocks |
+| Words in = words out, plus duplication, minus the strip | Pass — 37,982 in, 904 stripped, 96,853 written, 2.61x duplication |
+| Every lesson block carries the literal string `FOLLOW UP` | Pass — 46 blocks |
 | The string `FOLLOW UP` appears nowhere in the decode files | Pass |
+| Every decode filter cited in section 1.1 still exists under that exact heading | Pass — 5 of 5 |
+| Rebuilding all five lesson files against the revised decode files changes nothing | Pass — 5 of 5 byte-identical |
 

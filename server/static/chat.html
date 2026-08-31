@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Courtship Decoder</title>
+<style>
+  :root {
+    --bg: #fbf8f6;
+    --panel: #ffffff;
+    --ink: #2b2320;
+    --muted: #8a7d76;
+    --line: #ece4df;
+    --her: #f3ece7;
+    --accent: #7d5a4f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191513; --panel: #221d1a; --ink: #f0e9e5; --muted: #a2938b;
+      --line: #362e2a; --her: #2e2723; --accent: #d8b8a8;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  #log {
+    flex: 1; overflow-y: auto; padding: 20px 16px 8px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .msg { max-width: 44rem; width: 100%; margin: 0 auto; display: flex; }
+  .msg > div {
+    padding: 11px 15px; border-radius: 16px; white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .from-her { justify-content: flex-end; }
+  .from-her > div {
+    background: var(--her); border-bottom-right-radius: 5px; max-width: 82%;
+  }
+  .from-it > div {
+    background: var(--panel); border: 1px solid var(--line);
+    border-bottom-left-radius: 5px; max-width: 92%;
+  }
+  .note > div {
+    background: transparent; border: 1px dashed var(--line); color: var(--muted);
+    font-size: 14px; max-width: 92%;
+  }
+  .dots span {
+    display: inline-block; width: 6px; height: 6px; margin-right: 4px;
+    border-radius: 50%; background: var(--muted); animation: b 1.2s infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: .2s; }
+  .dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes b { 0%,60%,100% { opacity:.25 } 30% { opacity:1 } }
+  form {
+    display: flex; gap: 8px; padding: 12px 16px 16px;
+    border-top: 1px solid var(--line); background: var(--bg);
+  }
+  .bar { max-width: 44rem; width: 100%; margin: 0 auto; display: flex; gap: 8px; }
+  textarea {
+    flex: 1; resize: none; font: inherit; color: inherit; padding: 11px 14px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    max-height: 140px;
+  }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button {
+    font: inherit; font-weight: 600; padding: 0 20px; border: 0;
+    border-radius: 14px; background: var(--accent); color: #fff; cursor: pointer;
+  }
+  button:disabled { opacity: .45; cursor: default; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+
+<div id="log" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+<form id="form">
+  <div class="bar">
+    <label class="sr" for="input">Your message</label>
+    <textarea id="input" rows="1" placeholder="Tell me what's been happening…"
+              autocomplete="off"></textarea>
+    <button id="send" type="submit">Send</button>
+  </div>
+</form>
+
+<script>
+(function () {
+  "use strict";
+
+  var log = document.getElementById("log");
+  var form = document.getElementById("form");
+  var input = document.getElementById("input");
+  var send = document.getElementById("send");
+
+  // The conversation id lives in this tab only. An iframe on another domain
+  // cannot rely on cookies, so it is never one.
+  var KEY = "decoder.conversation";
+  var conversationId = null;
+  try { conversationId = sessionStorage.getItem(KEY); } catch (e) {}
+
+  function add(text, kind) {
+    var row = document.createElement("div");
+    row.className = "msg " + kind;
+    var bubble = document.createElement("div");
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    log.appendChild(row);
+    log.scrollTop = log.scrollHeight;
+    return row;
+  }
+
+  function thinking() {
+    var row = document.createElement("div");
+    row.className = "msg from-it";
+    row.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+    log.appendChild(row);
+    log.scrollTop = log.scrollHeight;
+    return row;
+  }
+
+  function grow() {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 140) + "px";
+  }
+  input.addEventListener("input", grow);
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text || send.disabled) return;
+
+    add(text, "from-her");
+    input.value = "";
+    grow();
+    send.disabled = true;
+    var wait = thinking();
+
+    fetch("api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, conversation_id: conversationId })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        wait.remove();
+        if (!res.ok) {
+          add(res.d.detail || "Something went wrong. Try again.", "note");
+          if (res.d.code === "conversation_limit") {
+            try { sessionStorage.removeItem(KEY); } catch (e) {}
+            conversationId = null;
+          }
+          return;
+        }
+        conversationId = res.d.conversation_id;
+        try { sessionStorage.setItem(KEY, conversationId); } catch (e) {}
+        add(res.d.reply, "from-it");
+      })
+      .catch(function () {
+        wait.remove();
+        add("I couldn't reach the connection. Try again in a moment.", "note");
+      })
+      .finally(function () {
+        send.disabled = false;
+        input.focus();
+      });
+  });
+
+  add("Hey beautiful. What stage are you in with this man?", "from-it");
+  input.focus();
+})();
+</script>
+</body>
+</html>

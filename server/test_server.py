@@ -1,0 +1,233 @@
+"""
+Tests for the parts that cost money or control access. No API calls: the
+provider is replaced with a fake that returns whatever the test wants.
+
+Run:  python -m server.test_server
+"""
+from __future__ import annotations
+
+import os
+import sys
+
+# Configure before importing the app: it reads its settings at import time.
+os.environ.update({
+    "PROVIDER": "anthropic",
+    "MODEL": "test-model",
+    "ANTHROPIC_API_KEY": "test-key",
+    "ALLOWED_ORIGINS": "https://her-site.kajabi.com,https://www.her-site.com",
+    "RATE_LIMIT_PER_MINUTE": "5",
+    "MAX_TOKENS_PER_CONVERSATION": "1000",
+    "CONVERSATION_TTL_MINUTES": "60",
+    "VERDICT_MATCH_THRESHOLD": "0.35",
+})
+
+from fastapi.testclient import TestClient  # noqa: E402
+
+from . import app as A  # noqa: E402
+from . import prompt as P  # noqa: E402
+from . import providers  # noqa: E402
+
+ORIGIN = "https://her-site.kajabi.com"
+CALLS: list[dict] = []
+NEXT_REPLY = {"text": "Tell me more."}
+
+
+class FakeProvider(providers.Provider):
+    name = "fake"
+
+    async def call(self, system, messages, cache_key):
+        CALLS.append({"system": system, "messages": list(messages),
+                      "cache_key": cache_key})
+        return providers.Reply(text=NEXT_REPLY["text"], input_tokens=100,
+                               output_tokens=20, cached_input_tokens=80)
+
+
+A.PROVIDER = FakeProvider("k", "test-model", 1024)
+client = TestClient(A.app)
+
+PASSED, FAILED = 0, 0
+
+
+def check(name: str, condition: bool, detail: str = "") -> None:
+    global PASSED, FAILED
+    if condition:
+        PASSED += 1
+        print(f"  pass  {name}")
+    else:
+        FAILED += 1
+        print(f"  FAIL  {name}" + (f"  — {detail}" if detail else ""))
+
+
+def say(text: str, cid: str | None = None, origin: str = ORIGIN):
+    payload = {"message": text}
+    if cid:
+        payload["conversation_id"] = cid
+    return client.post("/api/chat", json=payload, headers={"Origin": origin})
+
+
+def fresh():
+    CALLS.clear()
+    A.STORE._data.clear()
+    A.LIMITER._hits.clear()
+    NEXT_REPLY["text"] = "Tell me more."
+
+
+# ---------------------------------------------------------------------------
+print("\nThe lesson file is not loaded before a verdict")
+fresh()
+r = say("Stage 1. His bio is blank and there are photos of him with other women.")
+check("request succeeds", r.status_code == 200, r.text[:200])
+body = r.json()
+check("no verdict yet", body["verdict_delivered"] is False)
+check("lesson not loaded", body["lesson_loaded"] is False)
+check("system prompt has no lesson part", CALLS[-1]["system"].lesson is None)
+before_chars = CALLS[-1]["system"].chars
+check("system prompt is instructions + one decode file only",
+      before_chars < 60_000, f"{before_chars:,} chars")
+
+print("\nThe lesson file is loaded once a verdict lands, and not before")
+# The real Stage 1 dating-profile fail block, as the model would deliver it.
+blocks = P.verdict_blocks(P.STAGE_1)
+verdict_text = blocks[0]
+NEXT_REPLY["text"] = verdict_text
+r = say("Yes, all of that.", body["conversation_id"])
+body2 = r.json()
+check("verdict detected", body2["verdict_delivered"] is True,
+      f"score={body2['verdict_score']}")
+check("scored at or above the threshold", body2["verdict_score"] >= 0.35)
+check("lesson still not loaded on the verdict turn itself",
+      body2["lesson_loaded"] is False)
+
+NEXT_REPLY["text"] = "Anything else about him?"
+r = say("What do I do now?", body2["conversation_id"])
+body3 = r.json()
+check("lesson loaded on the next turn", body3["lesson_loaded"] is True)
+after_chars = CALLS[-1]["system"].chars
+check("system prompt grew by the lesson file",
+      after_chars > before_chars + 80_000,
+      f"{before_chars:,} -> {after_chars:,}")
+check("verdict stays delivered", body3["verdict_delivered"] is True)
+
+print("\nThe cacheable prefix is not disturbed when the lesson is appended")
+check("prefix identical before and after the verdict",
+      CALLS[0]["system"].prefix == CALLS[-1]["system"].prefix)
+check("lesson is a suffix, never a prefix",
+      CALLS[-1]["system"].text.startswith(CALLS[0]["system"].prefix))
+
+print("\nNon-verdict replies never unlock the lesson")
+fresh()
+r = say("Stage 2. We've been on 2 dates.")
+cid = r.json()["conversation_id"]
+for reply in ["What stage are you in with this man?",
+              "That's outside what I do here, beautiful. I decode his behavior "
+              "so you can see what he's actually showing you.",
+              "How many times have you been out?"]:
+    NEXT_REPLY["text"] = reply
+    out = say("ok", cid).json()
+    check(f"no verdict for: {reply[:38]}…", out["verdict_delivered"] is False,
+          f"score={out['verdict_score']}")
+
+print("\nStage resolution picks exactly one decode file")
+cases = [
+    ("Stage 1. His profile says he's seeing where things go.", P.STAGE_1),
+    ("Stage 2. We've been on 2 dates.", P.STAGE_2_P1),
+    ("Stage 2. We've been on 6 dates.", P.STAGE_2_P2),
+    ("Stage 2, phase 2, he still hasn't asked.", P.STAGE_2_P2),
+    ("Stage 3. We had the no girlfriend standard conversation.", P.STAGE_3),
+    ("Stage 4. He proposed in June.", P.STAGE_4),
+    ("I need help with this guy.", P.STAGE_1),
+    ("We've been on three dates and I'm in stage 2", P.STAGE_2_P2),
+]
+for text, expected in cases:
+    got = P.resolve_stage(text, None)
+    check(f"{text[:44]:46} -> {expected}", got == expected, f"got {got}")
+
+check("stage is sticky once known",
+      P.resolve_stage("he texted me again", P.STAGE_3) == P.STAGE_3)
+check("a named stage overrides the sticky one",
+      P.resolve_stage("actually stage 4 now", P.STAGE_3) == P.STAGE_4)
+
+print("\nOnly one decode file is ever in the system prompt")
+for stage in P.STAGES:
+    text = P.build(stage, False).text
+    others = [n for s, n in P.DECODE_FILE.items()
+              if s != stage and f"KNOWLEDGE FILE: {n}" in text]
+    check(f"{P.DECODE_FILE[stage]:34} alone", not others, f"also found {others}")
+
+print("\nOrigin allowlist")
+fresh()
+check("allowed origin accepted", say("hi", origin=ORIGIN).status_code == 200)
+check("second allowed origin accepted",
+      say("hi", origin="https://www.her-site.com").status_code == 200)
+bad = say("hi", origin="https://evil.example")
+check("unknown origin refused", bad.status_code == 403, bad.text[:120])
+check("refusal names the reason", bad.json()["code"] == "origin_not_allowed")
+check("no CORS header for a refused origin",
+      "access-control-allow-origin" not in bad.headers)
+ok = say("hi", origin=ORIGIN)
+check("CORS header echoes the allowed origin",
+      ok.headers.get("access-control-allow-origin") == ORIGIN)
+
+print("\nThe page can only be framed by the allowlist")
+page = client.get("/")
+csp = page.headers.get("content-security-policy", "")
+check("page served", page.status_code == 200)
+check("frame-ancestors names the Kajabi domain", ORIGIN in csp, csp[:120])
+check("no X-Frame-Options to fight it", "x-frame-options" not in page.headers)
+
+print("\nRate limit per IP")
+fresh()
+codes = [say("hi").status_code for _ in range(7)]
+check("first 5 allowed", codes[:5] == [200] * 5, str(codes))
+check("6th and 7th refused", codes[5:] == [429, 429], str(codes))
+last = say("hi")
+check("refusal carries Retry-After", "retry-after" in last.headers)
+
+print("\nHard token cap per conversation")
+fresh()
+r = say("hello")
+cid = r.json()["conversation_id"]
+seen = None
+for _ in range(12):
+    A.LIMITER._hits.clear()   # testing the cap here, not the rate limit
+    out = say("again", cid)
+    if out.status_code == 409:
+        seen = out.json()
+        break
+check("conversation is cut off at the cap", seen is not None)
+if seen:
+    check("cap refusal names the reason", seen["code"] == "conversation_limit")
+conv = A.STORE.get(cid)
+check("spend never exceeded the configured cap",
+      conv is None or conv.tokens_used <= 1000 + 120,
+      f"used {conv.tokens_used if conv else '?'}")
+
+print("\nAnthropic marks the system prompt as cacheable")
+captured = {}
+
+
+async def fake_post(url, headers, payload):
+    captured.update(payload)
+    return {"content": [{"type": "text", "text": "ok"}],
+            "usage": {"input_tokens": 10, "output_tokens": 5,
+                      "cache_creation_input_tokens": 0,
+                      "cache_read_input_tokens": 900}}
+
+
+providers.Provider._post = staticmethod(fake_post)
+import asyncio  # noqa: E402
+
+sp = P.build(P.STAGE_1, True)
+ap = providers.AnthropicProvider("k", "m", 1024)
+reply = asyncio.run(ap.call(sp, [{"role": "user", "content": "hi"}],
+                            "decoder:1:lesson"))
+sysblocks = captured.get("system", [])
+check("system is sent as blocks", isinstance(sysblocks, list) and len(sysblocks) == 2)
+check("every block carries a cache breakpoint",
+      all(b.get("cache_control", {}).get("type") == "ephemeral" for b in sysblocks))
+check("the stable prefix is the first block",
+      sysblocks and sysblocks[0]["text"] == sp.prefix)
+check("cached tokens are reported back", reply.cached_input_tokens == 900)
+
+print(f"\n{PASSED} passed, {FAILED} failed")
+sys.exit(1 if FAILED else 0)
