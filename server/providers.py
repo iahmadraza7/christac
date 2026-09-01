@@ -42,13 +42,20 @@ class ProviderError(RuntimeError):
 @dataclass
 class Reply:
     text: str
-    input_tokens: int
+    input_tokens: int          # every input token, however it was billed
     output_tokens: int
-    cached_input_tokens: int  # billed at the reduced rate, or not at all
+    cached_input_tokens: int   # read back from cache, billed at ~0.1x
+    cache_write_tokens: int = 0  # written to cache, billed at ~1.25x
 
     @property
     def total_tokens(self) -> int:
         return self.input_tokens + self.output_tokens
+
+    @property
+    def fresh_input_tokens(self) -> int:
+        """Input billed at the full rate: neither read from nor written to cache."""
+        return max(0, self.input_tokens - self.cached_input_tokens
+                   - self.cache_write_tokens)
 
 
 class Provider:
@@ -118,13 +125,14 @@ class AnthropicProvider(Provider):
                                 f"{body.get('stop_reason')})")
         u = body.get("usage", {})
         cached = u.get("cache_read_input_tokens", 0) or 0
+        written = u.get("cache_creation_input_tokens", 0) or 0
         return Reply(
             text=text,
             # Anthropic reports fresh, written and read input separately.
-            input_tokens=(u.get("input_tokens", 0)
-                          + u.get("cache_creation_input_tokens", 0) + cached),
+            input_tokens=u.get("input_tokens", 0) + written + cached,
             output_tokens=u.get("output_tokens", 0),
             cached_input_tokens=cached,
+            cache_write_tokens=written,
         )
 
 

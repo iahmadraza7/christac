@@ -208,6 +208,49 @@ def verdict_score(reply: str, stage: str) -> float:
 
 
 # ---------------------------------------------------------------------------
+# Repeat decode detection
+#
+# Her method ends after the verdict and the next step. If she comes back and
+# describes the same man again, re-decoding costs money and cannot reach a
+# different answer: the verdict follows his behaviour, and she has not given
+# any new behaviour. So the service answers without calling the model at all.
+#
+# This must NOT fire on two things that look superficially similar:
+#   - pushback ("but he's been busy"), which the instructions handle explicitly
+#     and which needs the model
+#   - a new man, which is a fresh decode and must run normally
+# Both are caught by the same test: pushback and a new man both carry wording
+# she has not used before, so their overlap with what she already said is low.
+# ---------------------------------------------------------------------------
+_NEW_MAN = re.compile(
+    r"(another (man|guy|one)|different (man|guy|one)|someone else|new (man|guy)|"
+    r"next (man|guy|one)|a different situation|other man)", re.I)
+
+
+def mentions_a_new_man(text: str) -> bool:
+    return bool(_NEW_MAN.search(text))
+
+
+def repeats_earlier_message(message: str, earlier: list[str],
+                            threshold: float) -> float:
+    """
+    How much of this message she has already told us, 0.0 to 1.0.
+
+    Containment of the new message's wording inside what she said before, so a
+    restatement scores high even when she words it more briefly the second time.
+    """
+    new = _shingles(_tokens(message))
+    if not new:
+        return 0.0
+    seen = set()
+    for m in earlier:
+        seen |= _shingles(_tokens(m))
+    if not seen:
+        return 0.0
+    return len(new & seen) / len(new)
+
+
+# ---------------------------------------------------------------------------
 # Assembly
 # ---------------------------------------------------------------------------
 @dataclass

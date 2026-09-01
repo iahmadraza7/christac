@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field
 
 from . import prompt as P
 from . import providers
+from . import cost
 from .state import ConversationStore, RateLimiter
 
 log = logging.getLogger("decoder")
@@ -87,9 +88,32 @@ CONVERSATION_TTL_MINUTES = _int("CONVERSATION_TTL_MINUTES", 120)
 VERDICT_MATCH_THRESHOLD = _float("VERDICT_MATCH_THRESHOLD", 0.35)
 TRUST_PROXY = (ENV.get("TRUST_PROXY") or "false").strip().lower() == "true"
 
+# --- cost and overuse controls ------------------------------------------
+# Her method ends after the verdict and the next step, so a real conversation
+# is a handful of turns. This sits well above that but still stops a runaway.
+MAX_TURNS_PER_CONVERSATION = _int("MAX_TURNS_PER_CONVERSATION", 20)
+
+# Repeat decode: how long after a verdict a restatement is treated as going
+# back over the same man, and how much of her wording must already have been
+# said for it to count as a restatement rather than new behaviour.
+REPEAT_WINDOW_TURNS = _int("REPEAT_DECODE_WINDOW_TURNS", 3)
+REPEAT_SIMILARITY = _float("REPEAT_DECODE_SIMILARITY", 0.60)
+
+# DRAFT — NOT HER WORDING. Written to her voice and flagged for her approval.
+# Overridable from .env so she can replace it without a code change.
+REPEAT_REPLY = (ENV.get("REPEAT_DECODE_REPLY") or
+                "We already read him, Queen. Going back over it won't change what "
+                "he showed you.\n\n"
+                "Want to decode another man?")
+
+MONTHLY_CEILING_USD = _float("MONTHLY_SPEND_CEILING_USD", 50.0)
+SPEND_LEDGER = Path(ENV.get("SPEND_LEDGER_PATH") or (HERE / ".spend.json"))
+
 PROVIDER = providers.build(PROVIDER_NAME, ENV, MODEL, MAX_OUTPUT_TOKENS)
 STORE = ConversationStore(ttl_seconds=CONVERSATION_TTL_MINUTES * 60)
 LIMITER = RateLimiter(limit=RATE_LIMIT_PER_MINUTE)
+RATES = cost.Rates.from_env(ENV)
+LEDGER = cost.MonthlyLedger(SPEND_LEDGER, MONTHLY_CEILING_USD)
 
 app = FastAPI(title="The Courtship Decoder", docs_url=None, redoc_url=None)
 
@@ -100,9 +124,15 @@ async def _startup() -> None:
     if missing:
         raise SystemExit("Missing knowledge files: " + ", ".join(missing))
     log.info("provider=%s model=%s", PROVIDER.name, MODEL)
-    log.info("rate limit=%d/min  conversation cap=%d tokens  ttl=%dm",
+    log.info("rate limit=%d/min  conversation cap=%d tokens / %d turns  ttl=%dm",
              RATE_LIMIT_PER_MINUTE, MAX_TOKENS_PER_CONVERSATION,
-             CONVERSATION_TTL_MINUTES)
+             MAX_TURNS_PER_CONVERSATION, CONVERSATION_TTL_MINUTES)
+    log.info("monthly ceiling $%.2f, spent so far $%.4f, ledger %s",
+             MONTHLY_CEILING_USD, LEDGER.spent(), SPEND_LEDGER)
+    if LEDGER.would_exceed():
+        log.warning("the monthly ceiling is already reached — the service will "
+                    "refuse every message until the ceiling is raised or the "
+                    "month rolls over")
     if ALLOWED_ORIGINS:
         log.info("allowed origins: %s", ", ".join(ALLOWED_ORIGINS))
     else:
@@ -187,6 +217,15 @@ async def chat(body: ChatIn, request: Request) -> Response:
              "detail": "This page is not allowed to be used from that domain."},
             status_code=403)
 
+    # The month's ceiling comes first: past it, nothing may spend at all.
+    if LEDGER.would_exceed():
+        log.error("monthly ceiling reached: $%.4f of $%.2f", LEDGER.spent(),
+                  MONTHLY_CEILING_USD)
+        return JSONResponse(
+            {"code": "monthly_ceiling_reached",
+             "detail": "The Decoder is resting for now. Please check back soon."},
+            status_code=503, headers={**extra, "Retry-After": "3600"})
+
     ip = client_ip(request)
     ok, retry_after = LIMITER.check(ip)
     if not ok:
@@ -210,6 +249,16 @@ async def chat(body: ChatIn, request: Request) -> Response:
     if conversation is None:
         conversation = STORE.new(stage=P.STAGE_1)
 
+    # A conversation cannot sprawl. Her method ends after the verdict and the
+    # next step, so this ceiling sits well above a real conversation.
+    if conversation.turns >= MAX_TURNS_PER_CONVERSATION:
+        return JSONResponse(
+            {"code": "conversation_turn_limit",
+             "detail": "We've covered a lot here. Start a new conversation and "
+                       "tell me about him fresh.",
+             "conversation_id": conversation.id},
+            status_code=409, headers=extra)
+
     # The hard cap. Checked before the call so a conversation that is already
     # over budget cannot buy one more expensive turn.
     if conversation.tokens_used >= MAX_TOKENS_PER_CONVERSATION:
@@ -225,6 +274,36 @@ async def chat(body: ChatIn, request: Request) -> Response:
                     if m["role"] == "user")
     stage = P.resolve_stage(f"{said} {message}", conversation.stage)
     conversation.stage = stage
+
+    # Going back over a man already decoded cannot reach a different answer,
+    # because the verdict follows his behaviour and she has given no new
+    # behaviour. Answer without calling the model — that is the saving.
+    since = conversation.turns_since_verdict()
+    if (conversation.verdict_delivered and since is not None
+            and since <= REPEAT_WINDOW_TURNS
+            and not P.mentions_a_new_man(message)):
+        overlap = P.repeats_earlier_message(message, conversation.her_messages,
+                                            REPEAT_SIMILARITY)
+        if overlap >= REPEAT_SIMILARITY:
+            conversation.repeats_blocked += 1
+            conversation.messages += [{"role": "user", "content": message},
+                                      {"role": "assistant", "content": REPEAT_REPLY}]
+            STORE.touch(conversation)
+            log.info("conv=%s repeat decode blocked (overlap %.2f), no API call",
+                     conversation.id[:8], overlap)
+            return JSONResponse({
+                "reply": REPEAT_REPLY,
+                "conversation_id": conversation.id,
+                "stage": stage,
+                "verdict_delivered": True,
+                "verdict_just_delivered": False,
+                "lesson_loaded": False,
+                "verdict_score": 0.0,
+                "repeat_decode_blocked": True,
+                "tokens_used": conversation.tokens_used,
+                "tokens_remaining": max(0, MAX_TOKENS_PER_CONVERSATION
+                                        - conversation.tokens_used),
+            }, headers=extra)
 
     system = P.build(stage, conversation.verdict_delivered)
     turn_messages = [*conversation.messages, {"role": "user", "content": message}]
@@ -247,6 +326,9 @@ async def chat(body: ChatIn, request: Request) -> Response:
     conversation.messages = [*turn_messages,
                              {"role": "assistant", "content": reply.text}]
     conversation.tokens_used += reply.total_tokens
+    turn_usd = RATES.usd_for(reply)
+    conversation.usd_spent += turn_usd
+    month_usd = LEDGER.add(turn_usd)
 
     # Has a verdict landed? Scored against the decode file that was in play for
     # this reply. Once true it stays true for the conversation.
@@ -260,13 +342,16 @@ async def chat(body: ChatIn, request: Request) -> Response:
     STORE.touch(conversation)
 
     log.info(
-        "conv=%s stage=%s turn=%d verdict=%s score=%.2f lesson=%s "
-        "sys=%dKB in=%d cached=%d out=%d used=%d/%d %.1fs",
+        "conv=%s stage=%s turn=%d/%d verdict=%s score=%.2f lesson=%s "
+        "sys=%dKB fresh=%d write=%d read=%d out=%d $%.5f "
+        "conv$%.5f month$%.4f/%.2f %.1fs",
         conversation.id[:8], stage, conversation.turns,
+        MAX_TURNS_PER_CONVERSATION,
         conversation.verdict_delivered, score, bool(system.lesson),
-        system.chars // 1024, reply.input_tokens, reply.cached_input_tokens,
-        reply.output_tokens, conversation.tokens_used,
-        MAX_TOKENS_PER_CONVERSATION, time.time() - started,
+        system.chars // 1024, reply.fresh_input_tokens, reply.cache_write_tokens,
+        reply.cached_input_tokens, reply.output_tokens, turn_usd,
+        conversation.usd_spent, month_usd, MONTHLY_CEILING_USD,
+        time.time() - started,
     )
 
     return JSONResponse({
@@ -277,9 +362,13 @@ async def chat(body: ChatIn, request: Request) -> Response:
         "verdict_just_delivered": newly,
         "lesson_loaded": bool(system.lesson),
         "verdict_score": round(score, 3),
+        "repeat_decode_blocked": False,
         "tokens_used": conversation.tokens_used,
         "tokens_remaining": max(0, MAX_TOKENS_PER_CONVERSATION
                                 - conversation.tokens_used),
+        "turns_used": conversation.turns,
+        "turns_remaining": max(0, MAX_TURNS_PER_CONVERSATION
+                               - conversation.turns),
     }, headers=extra)
 
 
@@ -291,6 +380,10 @@ async def health() -> dict:
         "model": MODEL,
         "conversations": STORE.count(),
         "origins_configured": len(ALLOWED_ORIGINS),
+        "month_spent_usd": round(LEDGER.spent(), 4),
+        "month_ceiling_usd": MONTHLY_CEILING_USD,
+        "month_remaining_usd": round(LEDGER.remaining(), 4),
+        "serving": not LEDGER.would_exceed(),
     }
 
 

@@ -26,11 +26,23 @@ class Conversation:
     verdict_delivered: bool = False
     verdict_turn: int | None = None
     tokens_used: int = 0
+    usd_spent: float = 0.0
+    repeats_blocked: int = 0
     messages: list[dict] = field(default_factory=list)
 
     @property
     def turns(self) -> int:
         return sum(1 for m in self.messages if m["role"] == "user")
+
+    @property
+    def her_messages(self) -> list[str]:
+        return [m["content"] for m in self.messages if m["role"] == "user"]
+
+    def turns_since_verdict(self) -> int | None:
+        """How many of her turns have gone by since the verdict landed."""
+        if self.verdict_turn is None:
+            return None
+        return self.turns - self.verdict_turn
 
 
 class ConversationStore:

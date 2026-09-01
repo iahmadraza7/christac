@@ -10,6 +10,11 @@ import os
 import sys
 
 # Configure before importing the app: it reads its settings at import time.
+import tempfile
+
+# The spend ledger is a real file; give the tests a throwaway one.
+LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "spend.json")
+
 os.environ.update({
     "PROVIDER": "anthropic",
     "MODEL": "test-model",
@@ -19,12 +24,20 @@ os.environ.update({
     "MAX_TOKENS_PER_CONVERSATION": "1000",
     "CONVERSATION_TTL_MINUTES": "60",
     "VERDICT_MATCH_THRESHOLD": "0.35",
+    "MAX_TURNS_PER_CONVERSATION": "40",
+    "REPEAT_DECODE_WINDOW_TURNS": "3",
+    "REPEAT_DECODE_SIMILARITY": "0.60",
+    "MONTHLY_SPEND_CEILING_USD": "1.00",
+    "SPEND_LEDGER_PATH": LEDGER_PATH,
 })
+
 
 from fastapi.testclient import TestClient  # noqa: E402
 
 from . import app as A  # noqa: E402
 from . import prompt as P  # noqa: E402
+import pathlib  # noqa: E402
+from . import cost  # noqa: E402
 from . import providers  # noqa: E402
 
 ORIGIN = "https://her-site.kajabi.com"
@@ -69,6 +82,7 @@ def fresh():
     CALLS.clear()
     A.STORE._data.clear()
     A.LIMITER._hits.clear()
+    A.LEDGER._usd = 0.0
     NEXT_REPLY["text"] = "Tell me more."
 
 
@@ -228,6 +242,99 @@ check("every block carries a cache breakpoint",
 check("the stable prefix is the first block",
       sysblocks and sysblocks[0]["text"] == sp.prefix)
 check("cached tokens are reported back", reply.cached_input_tokens == 900)
+
+print("\nA conversation cannot sprawl past the turn limit")
+fresh()
+A.MAX_TURNS_PER_CONVERSATION = 6   # lowered here only, to reach it quickly
+r = say("Stage 1. Tell me about him.")
+cid = r.json()["conversation_id"]
+codes = []
+for i in range(8):
+    A.LIMITER._hits.clear()
+    NEXT_REPLY["text"] = f"Reply {i} worded completely differently every single time."
+    codes.append(say(f"An entirely unrelated new thing number {i}.", cid).status_code)
+check("the turn limit stops it", 409 in codes, str(codes))
+check("it stops at the configured turn, not before",
+      codes.index(409) == 5 if 409 in codes else False,
+      f"first refusal at extra turn {codes.index(409) + 1 if 409 in codes else None}")
+conv = A.STORE.get(cid)
+check("no turn beyond the limit reached the model",
+      conv is None or conv.turns <= 6, f"turns={conv.turns if conv else '?'}")
+
+A.MAX_TURNS_PER_CONVERSATION = 40
+
+print("\nGoing back over the same man does not call the model again")
+fresh()
+SCENARIO = ("Stage 1. His bio is blank and there are photos of him with other "
+            "women and he says he is seeing where things go.")
+cid = say(SCENARIO).json()["conversation_id"]
+NEXT_REPLY["text"] = P.verdict_blocks(P.STAGE_1)[0]
+out = say("Yes that is him.", cid).json()
+check("a verdict landed first", out["verdict_delivered"] is True)
+before = len(CALLS)
+again = say(SCENARIO, cid).json()
+check("the repeat was answered with no API call at all", len(CALLS) == before,
+      f"{len(CALLS) - before} extra call(s)")
+check("it is flagged as a blocked repeat",
+      again.get("repeat_decode_blocked") is True)
+check("the reply is the configured line", again["reply"] == A.REPEAT_REPLY)
+check("no lesson file was attached to it", again["lesson_loaded"] is False)
+
+print("\nBut pushback and a new man still reach the model")
+before = len(CALLS)
+NEXT_REPLY["text"] = "His behavior is still showing you the same thing."
+push = say("But he has been really busy with work and he did say he sees a future "
+           "with me, and I have never felt like this before.", cid).json()
+check("pushback is not treated as a repeat",
+      len(CALLS) == before + 1 and not push.get("repeat_decode_blocked"))
+before = len(CALLS)
+NEXT_REPLY["text"] = "What stage are you in with this man, Queen?"
+newman = say("I want to decode another man now.", cid).json()
+check("a new man is not treated as a repeat",
+      len(CALLS) == before + 1 and not newman.get("repeat_decode_blocked"))
+
+print("\nThe monthly ceiling stops the service rather than letting the bill run")
+fresh()
+check("serving while under the ceiling",
+      client.get("/api/health").json()["serving"] is True)
+A.LEDGER.add(0.99)
+check("still serving just under the ceiling", say("hello").status_code == 200)
+A.LEDGER.add(0.02)
+blocked = say("hello")
+check("refused once the ceiling is reached", blocked.status_code == 503,
+      str(blocked.status_code))
+check("the refusal names the reason",
+      blocked.json()["code"] == "monthly_ceiling_reached")
+check("health reports it has stopped serving",
+      client.get("/api/health").json()["serving"] is False)
+before = len(CALLS)
+say("hello")
+check("nothing reaches the model once the ceiling is reached",
+      len(CALLS) == before)
+
+print("\nThe spend ledger survives a restart")
+A.LEDGER._usd = 0.0
+A.LEDGER.add(0.25)
+reloaded = cost.MonthlyLedger(pathlib.Path(LEDGER_PATH), 1.00)
+check("spend is read back from disk", abs(reloaded.spent() - 0.25) < 1e-9,
+      str(reloaded.spent()))
+check("a month with no ledger yet starts at zero",
+      cost.MonthlyLedger(pathlib.Path(LEDGER_PATH + ".missing"), 1.0).spent() == 0.0)
+
+print("\nCost arithmetic matches the published rates")
+rates = cost.Rates(input_per_mtok=5.0, output_per_mtok=25.0,
+                   cache_write_per_mtok=6.25, cache_read_per_mtok=0.50)
+check("1M fresh input costs $5.00", abs(rates.usd(1_000_000, 0, 0, 0) - 5.0) < 1e-9)
+check("1M output costs $25.00", abs(rates.usd(0, 0, 0, 1_000_000) - 25.0) < 1e-9)
+check("1M cache write costs $6.25", abs(rates.usd(0, 1_000_000, 0, 0) - 6.25) < 1e-9)
+check("1M cache read costs $0.50", abs(rates.usd(0, 0, 1_000_000, 0) - 0.50) < 1e-9)
+rep = providers.Reply(text="x", input_tokens=13623, output_tokens=92,
+                      cached_input_tokens=13617, cache_write_tokens=0)
+check("a cached turn separates fresh input from cached",
+      rep.fresh_input_tokens == 6, str(rep.fresh_input_tokens))
+check("a cached turn costs far less than the same turn uncached",
+      rates.usd_for(rep) < rates.usd(rep.input_tokens, 0, 0, rep.output_tokens) / 5)
+
 
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

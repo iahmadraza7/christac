@@ -5,3 +5,6 @@ results/
 
 __pycache__/
 results/
+
+# the running spend ledger, not source
+server/.spend.json
