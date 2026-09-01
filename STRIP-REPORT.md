@@ -612,7 +612,7 @@ You may name Date To The Ring, High League Positioning, the No Girlfriend Standa
 You may name Date To The Ring, High League Positioning, the No Girlfriend Standard, the Vetting Process, and the Marriage Blueprint. Those are hers. Everything else about how you work stays invisible.
 ```
 
-`courtship-decoder-instructions.md` is now **6,887 characters**, against the 8,000 limit. It was 6,483 before.
+`courtship-decoder-instructions.md` is now **7,031 characters**, against the 8,000 limit. It was 6,483 before.
 
 `Blueprint` is not on the forbidden-words list in that file, so the two rules do not contradict each other.
 
@@ -680,7 +680,7 @@ Re-run after all ten decisions were applied — the six earlier ones and the fou
 | Every lesson block carries the literal string `FOLLOW UP` | Pass — 46 blocks, 46 USE lines |
 | The string `FOLLOW UP` appears nowhere in the decode files | Pass |
 | Every decode filter cited in section 1.1 still exists under that exact heading | Pass — 5 of 5 |
-| `courtship-decoder-instructions.md` stays under 8,000 characters | Pass — 6,887 |
+| `courtship-decoder-instructions.md` stays under 8,000 characters | Pass — 7,031 |
 | Decision 2: the quiet threshold is stated, and every word of hers is kept | Pass |
 | Decision 3: the non-negotiable lines now precede the disqualify line | Pass |
 | Decision 3: no line of that slide added, lost or reworded | Pass — 17 of 17 |
