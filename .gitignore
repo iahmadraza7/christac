@@ -5,5 +5,8 @@
 __pycache__/
 results/
 
+# Delivery archives built for hand-off. Rebuilt on demand, not source.
+*.zip
+
 # The running spend ledger, written at runtime. Not source.
 server/.spend.json
