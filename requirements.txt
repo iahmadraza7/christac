@@ -1,0 +1,18 @@
+# The Courtship Decoder — server dependencies.
+#
+# Pinned to the versions this was built and tested against. Install with:
+#     pip install -r requirements.txt
+#
+# There is deliberately no provider SDK here. The three model adapters in
+# server/providers.py post to the APIs directly over httpx, which keeps one
+# common interface across Anthropic, OpenAI and Google.
+
+fastapi==0.115.6
+uvicorn==0.34.0
+httpx==0.28.1
+pydantic==2.10.4
+
+# Pulled in by the packages above. Pinned too, so a fresh install on the host
+# cannot quietly resolve to a different version than the one that was tested.
+starlette==0.41.3
+anyio==4.12.1

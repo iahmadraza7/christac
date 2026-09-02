@@ -1,0 +1,51 @@
+<!--
+  The Courtship Decoder — paste this whole block into a Kajabi Custom Code block.
+
+  CHANGE ONE THING: the web address inside src="..." below. Replace
+  https://YOUR-SERVICE.up.railway.app with the address of the live Decoder.
+  Everything else can stay exactly as it is.
+
+  The chat scrolls inside its own box, so the page around it never gets a
+  second scrollbar. On a phone the box grows to fit the screen; on a desktop
+  it settles at a comfortable reading height.
+-->
+
+<div class="courtship-decoder">
+  <iframe
+    src="https://YOUR-SERVICE.up.railway.app/"
+    title="The Courtship Decoder"
+    loading="lazy"
+    scrolling="no"
+    allow="clipboard-write"
+    referrerpolicy="no-referrer"></iframe>
+</div>
+
+<style>
+  .courtship-decoder {
+    /* Tall enough to hold a real conversation, never taller than the screen. */
+    height: min(78vh, 760px);
+    /* Never shorter than this, or the reply area gets cramped on small phones. */
+    min-height: 460px;
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;                 /* keeps the rounded corners clean */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+  }
+
+  .courtship-decoder iframe {
+    display: block;                   /* removes the stray gap under an iframe */
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* On a phone, give it the screen minus room for the site header. */
+  @media (max-width: 640px) {
+    .courtship-decoder {
+      height: min(80vh, 640px);
+      border-radius: 10px;
+    }
+  }
+</style>

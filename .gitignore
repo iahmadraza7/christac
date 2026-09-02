@@ -1,10 +1,9 @@
+# Secrets. Never committed; the host gets these as environment variables.
 .env
 
+# Build and run artefacts
 __pycache__/
 results/
 
-__pycache__/
-results/
-
-# the running spend ledger, not source
+# The running spend ledger, written at runtime. Not source.
 server/.spend.json
