@@ -18,6 +18,7 @@ design.
 """
 from __future__ import annotations
 
+import json
 import re
 import threading
 from dataclasses import dataclass
@@ -26,6 +27,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 INSTRUCTIONS_FILE = "courtship-decoder-instructions.md"
+# Deduplicated lesson source used by the service. Each lesson is stored
+# once here; the L1-L5 files remain untouched for her GPT.
+LESSON_DIR = "server/lessons"
+NEWLINE = chr(10)
 
 # Stage keys are internal. Stage 2 carries a phase because the decode files
 # split it and the instructions forbid judging a Phase 1 woman by Phase 2.
@@ -76,7 +81,9 @@ def read_file(name: str) -> str:
 def preflight() -> list[str]:
     """Every file the service can ever need. Called once at startup."""
     missing = []
-    for name in [INSTRUCTIONS_FILE, *DECODE_FILE.values(), *LESSON_FILE.values()]:
+    parts = [f"{LESSON_DIR}/manifest.json"]
+    for name in [INSTRUCTIONS_FILE, *DECODE_FILE.values(), *LESSON_FILE.values(),
+                 *parts]:
         if not (ROOT / name).is_file():
             missing.append(name)
     return missing
@@ -223,8 +230,8 @@ def verdict_score(reply: str, stage: str) -> float:
 # she has not used before, so their overlap with what she already said is low.
 # ---------------------------------------------------------------------------
 _NEW_MAN = re.compile(
-    r"(another (man|guy|one)|different (man|guy|one)|someone else|new (man|guy)|"
-    r"next (man|guy|one)|a different situation|other man)", re.I)
+    r"\b(another (man|guy|one)|different (man|guy|one)|someone else|new (man|guy)|"
+    r"next (man|guy|one)|a different situation|other man)\b", re.I)
 
 
 def mentions_a_new_man(text: str) -> bool:
@@ -251,17 +258,61 @@ def repeats_earlier_message(message: str, earlier: list[str],
 
 
 # ---------------------------------------------------------------------------
+# Lesson composition
+#
+# The L1-L5 files stay exactly as they are, because her GPT can only load one
+# file and needs every lesson for a stage in one place. The service has no such
+# limit, so it stores each lesson once and composes the stage's set on demand —
+# in her original order, so what the model sees is unchanged.
+# ---------------------------------------------------------------------------
+_manifest_cache: dict | None = None
+
+
+def manifest() -> dict:
+    global _manifest_cache
+    if _manifest_cache is None:
+        _manifest_cache = json.loads(read_file(f"{LESSON_DIR}/manifest.json"))
+    return _manifest_cache
+
+
+def compose_lessons(stage: str) -> str:
+    entry = manifest()[stage]
+    label = entry["label"]
+    blocks = []
+    for item in entry["lessons"]:
+        body = read_file(f"{LESSON_DIR}/{item['file']}").strip()
+        blocks.append(
+            f"## FOLLOW UP — {label} — {item['title']}" + NEWLINE * 2
+            + "USE: after a verdict only. Never to reach one." + NEWLINE * 2
+            + body)
+    return (NEWLINE * 2).join(blocks)
+
+
+# ---------------------------------------------------------------------------
 # Assembly
 # ---------------------------------------------------------------------------
 @dataclass
 class SystemPrompt:
-    prefix: str          # instructions + decode file. Stable, cacheable.
-    lesson: str | None   # appended only after a verdict. None before one.
+    """
+    The prompt in parts, so each can carry its own cache decision.
+
+    prefix   instructions + the one decode file. Stable for the whole
+             conversation, so always worth caching.
+    lesson   the stage's lessons, composed from the deduplicated source in her
+             original order. None until a verdict lands, and always appended
+             after the prefix so switching it on leaves the cached prefix alone.
+    """
+    prefix: str
+    lesson: str | None
     stage: str
 
     @property
+    def parts(self) -> list[str]:
+        return [x for x in (self.prefix, self.lesson) if x]
+
+    @property
     def text(self) -> str:
-        return self.prefix if self.lesson is None else self.prefix + self.lesson
+        return "".join(self.parts)
 
     @property
     def chars(self) -> int:
@@ -276,7 +327,6 @@ def build(stage: str, verdict_delivered: bool) -> SystemPrompt:
 
     lesson = None
     if verdict_delivered:
-        lesson_name = LESSON_FILE[stage]
-        lesson = DELIMITER.format(name=lesson_name) + read_file(lesson_name).strip()
+        lesson = DELIMITER.format(name=LESSON_FILE[stage]) + compose_lessons(stage)
 
     return SystemPrompt(prefix=prefix, lesson=lesson, stage=stage)

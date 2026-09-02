@@ -62,10 +62,17 @@ class Provider:
     name = ""
     env_key = ""
 
-    def __init__(self, api_key: str, model: str, max_output_tokens: int):
+    def __init__(self, api_key: str, model: str, max_output_tokens: int,
+                 cache_ttl: str = "5m", min_cacheable_chars: int = 4000):
         self.api_key = api_key
         self.model = model
         self.max_output_tokens = max_output_tokens
+        # How long a cached block survives. "5m" is the API default; "1h"
+        # costs more to write but is worth it when traffic is sparse, because
+        # the alternative is paying the full price again on every cold start.
+        self.cache_ttl = cache_ttl
+        # A block too small to be worth a breakpoint is sent uncached.
+        self.min_cacheable_chars = min_cacheable_chars
 
     async def call(self, system: SystemPrompt, messages: list[dict],
                    cache_key: str) -> Reply:
@@ -93,17 +100,17 @@ class AnthropicProvider(Provider):
         # Two blocks, each its own cache breakpoint. The prefix block is
         # unchanged for the life of the conversation; the lesson block appears
         # only after a verdict and does not disturb the prefix already cached.
-        blocks = [{
-            "type": "text",
-            "text": system.prefix,
-            "cache_control": {"type": "ephemeral"},
-        }]
-        if system.lesson:
-            blocks.append({
-                "type": "text",
-                "text": system.lesson,
-                "cache_control": {"type": "ephemeral"},
-            })
+        blocks = []
+        for part in system.parts:
+            block = {"type": "text", "text": part}
+            # Decide the breakpoint per block rather than always writing. A
+            # block only earns the write premium if it will be read again.
+            if len(part) >= self.min_cacheable_chars:
+                cc = {"type": "ephemeral"}
+                if self.cache_ttl and self.cache_ttl != "5m":
+                    cc["ttl"] = self.cache_ttl
+                block["cache_control"] = cc
+            blocks.append(block)
 
         body = await self._post(
             self.URL,

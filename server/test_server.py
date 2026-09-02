@@ -336,5 +336,97 @@ check("a cached turn costs far less than the same turn uncached",
       rates.usd_for(rep) < rates.usd(rep.input_tokens, 0, 0, rep.output_tokens) / 5)
 
 
+print("\nThe new-man phrases are recognised, and nothing else is")
+for _text, _want in [
+    ("Another man. Stage 2, we have been on 6 dates.", True),
+    ("I want to decode a different man.", True),
+    ("Let's do another man.", True),
+    ("Tell me about someone else.", True),
+    ("Next guy.", True),
+    ("But he has been really busy with work.", False),
+    ("He texts me every day but has not planned another date.", False),
+    ("His bio is blank and there are photos with other women.", False),
+]:
+    check(f"{_want!s:5} <- {_text[:46]}", P.mentions_a_new_man(_text) is _want)
+check("the pattern holds no stray control characters",
+      not any(ord(c) < 32 for c in P._NEW_MAN.pattern))
+
+
+
+print("\nThree men in one sitting all get decoded")
+fresh()
+A.MAX_TURNS_PER_CONVERSATION = 4   # deliberately tight, to prove it is per man
+MEN = [
+    ("Stage 1. His bio is blank and there are photos of him with other women.",
+     P.STAGE_1),
+    ("Another man. Stage 2, we have been on 6 dates and he still has not asked.",
+     P.STAGE_2_P2),
+    ("I want to decode a different man. Stage 3, I gave him the "
+     "No-Girlfriend Standard five months ago.", P.STAGE_3),
+]
+decoded, seen_men = [], []
+cid = None
+for n, (msg, want_stage) in enumerate(MEN, start=1):
+    NEXT_REPLY["text"] = P.verdict_blocks(want_stage)[0]
+    out = say(msg, cid).json()
+    cid = out["conversation_id"]
+    # a second turn on the same man, so the session total will exceed the
+    # per-man limit and prove the limit is not session-wide
+    A.LIMITER._hits.clear()
+    NEXT_REPLY["text"] = f"A follow-up about man {n}, worded differently."
+    out2 = say(f"One more detail about him, number {n}.", cid).json()
+    decoded.append(out["verdict_delivered"])
+    seen_men.append(out["man_number"])
+    check(f"man {n} was decoded, not refused", out["verdict_delivered"] is True,
+          f"code={out.get('code')}")
+    check(f"man {n} got the right stage file", out["stage"] == want_stage,
+          f"got {out['stage']} wanted {want_stage}")
+    check(f"man {n} could still be talked about after his verdict",
+          out2.get("code") is None, str(out2.get("code")))
+check("all three men were decoded in one session", all(decoded))
+check("the service counted them as three separate men", seen_men == [1, 2, 3],
+      str(seen_men))
+conv = A.STORE.get(cid)
+check("the session ran past the per-man limit without being cut off",
+      conv.turns > A.MAX_TURNS_PER_CONVERSATION,
+      f"{conv.turns} turns, limit {A.MAX_TURNS_PER_CONVERSATION} per man")
+
+print("\nMoving to a new man clears the last man's verdict and stage")
+fresh()
+A.MAX_TURNS_PER_CONVERSATION = 4
+NEXT_REPLY["text"] = P.verdict_blocks(P.STAGE_3)[0]
+first = say("Stage 3. I gave him the No-Girlfriend Standard five months ago.").json()
+cid = first["conversation_id"]
+check("the first man reached a verdict", first["verdict_delivered"] is True)
+check("his stage was Stage 3", first["stage"] == P.STAGE_3)
+NEXT_REPLY["text"] = "What stage are you in with this man, Queen?"
+nxt = say("Let's do another man.", cid).json()
+check("the move to a new man is reported", nxt["started_new_man"] is True)
+check("the previous verdict no longer applies", nxt["verdict_delivered"] is False)
+check("no lesson file is carried over", nxt["lesson_loaded"] is False)
+check("the stage is re-identified, not inherited", nxt["stage"] == P.STAGE_1,
+      f"got {nxt['stage']}")
+check("his turn count started again", nxt["turns_this_man"] == 1,
+      str(nxt["turns_this_man"]))
+
+print("\nOne man still cannot be re-litigated past the limit")
+fresh()
+A.MAX_TURNS_PER_CONVERSATION = 4
+cid = say("Stage 1. Tell me about this man of mine.").json()["conversation_id"]
+codes = []
+for i in range(6):
+    A.LIMITER._hits.clear()
+    NEXT_REPLY["text"] = f"Another differently worded reply, number {i}."
+    codes.append(say(f"A completely separate new detail about him, number {i}.",
+                     cid).status_code)
+check("the same man is eventually cut off", 409 in codes, str(codes))
+refusal = say("And one more thing about him.", cid)
+check("the refusal names the per-man limit",
+      refusal.json()["code"] == "man_turn_limit", refusal.json().get("code"))
+check("but she can still move to another man afterwards",
+      say("I want to decode another man.", cid).status_code == 200)
+A.MAX_TURNS_PER_CONVERSATION = 40
+
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

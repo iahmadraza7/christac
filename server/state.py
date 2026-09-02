@@ -22,7 +22,7 @@ class Conversation:
     id: str
     created: float
     updated: float
-    stage: str
+    stage: str | None
     verdict_delivered: bool = False
     verdict_turn: int | None = None
     tokens_used: int = 0
@@ -30,19 +30,43 @@ class Conversation:
     repeats_blocked: int = 0
     messages: list[dict] = field(default_factory=list)
 
+    # Everything below is scoped to the man currently being decoded. She is
+    # expected to move on to another man — the flow ends by offering exactly
+    # that — so the turn limit counts this man's turns, not the whole session.
+    man_number: int = 1
+    man_started_at: int = 0          # index into messages where this man began
+
     @property
     def turns(self) -> int:
         return sum(1 for m in self.messages if m["role"] == "user")
 
     @property
     def her_messages(self) -> list[str]:
-        return [m["content"] for m in self.messages if m["role"] == "user"]
+        """Only what she has said about the man currently in play."""
+        return [m["content"] for m in self.messages[self.man_started_at:]
+                if m["role"] == "user"]
+
+    @property
+    def turns_this_man(self) -> int:
+        return len(self.her_messages)
 
     def turns_since_verdict(self) -> int | None:
         """How many of her turns have gone by since the verdict landed."""
         if self.verdict_turn is None:
             return None
-        return self.turns - self.verdict_turn
+        return self.turns_this_man - self.verdict_turn
+
+    def start_new_man(self) -> None:
+        """
+        She has moved on to a different man. Everything about the last one is
+        put down: his verdict, his turn count, and his stage. The instructions
+        are explicit that two men are never assumed to be in the same stage.
+        """
+        self.man_number += 1
+        self.man_started_at = len(self.messages)
+        self.verdict_delivered = False
+        self.verdict_turn = None
+        self.stage = None
 
 
 class ConversationStore:

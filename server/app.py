@@ -49,8 +49,18 @@ def load_env() -> dict:
                 continue
             k, v = line.split("=", 1)
             values[k.strip()] = v.strip().strip('"').strip("'")
-    values.update(os.environ)  # a real environment variable wins over .env
+    # A real environment variable wins over .env, which is the normal
+    # deployment convention. It is also a trap: a stray ANTHROPIC_API_KEY left
+    # in a shell silently replaces the key in .env, and the only symptom is the
+    # other account's billing errors. So say so, loudly, at startup.
+    global OVERRIDDEN
+    OVERRIDDEN = sorted(k for k, v in values.items()
+                        if k in os.environ and os.environ[k] != v)
+    values.update(os.environ)
     return values
+
+
+OVERRIDDEN: list[str] = []
 
 
 ENV = load_env()
@@ -99,7 +109,7 @@ MAX_TURNS_PER_CONVERSATION = _int("MAX_TURNS_PER_CONVERSATION", 20)
 REPEAT_WINDOW_TURNS = _int("REPEAT_DECODE_WINDOW_TURNS", 3)
 REPEAT_SIMILARITY = _float("REPEAT_DECODE_SIMILARITY", 0.60)
 
-# DRAFT — NOT HER WORDING. Written to her voice and flagged for her approval.
+# Approved by her as drafted.
 # Overridable from .env so she can replace it without a code change.
 REPEAT_REPLY = (ENV.get("REPEAT_DECODE_REPLY") or
                 "We already read him, Queen. Going back over it won't change what "
@@ -109,7 +119,16 @@ REPEAT_REPLY = (ENV.get("REPEAT_DECODE_REPLY") or
 MONTHLY_CEILING_USD = _float("MONTHLY_SPEND_CEILING_USD", 50.0)
 SPEND_LEDGER = Path(ENV.get("SPEND_LEDGER_PATH") or (HERE / ".spend.json"))
 
+# "5m" is the API default and measured cheapest here: a 1h cache costs 2x to
+# write instead of 1.25x, and at this traffic shape the pricier write is not
+# repaid. Switch to "1h" only if measurement shows conversations clustering
+# within the hour but not within five minutes.
+CACHE_TTL = (ENV.get("CACHE_TTL") or "5m").strip()
+MIN_CACHEABLE_CHARS = _int("MIN_CACHEABLE_CHARS", 4000)
+
 PROVIDER = providers.build(PROVIDER_NAME, ENV, MODEL, MAX_OUTPUT_TOKENS)
+PROVIDER.cache_ttl = CACHE_TTL
+PROVIDER.min_cacheable_chars = MIN_CACHEABLE_CHARS
 STORE = ConversationStore(ttl_seconds=CONVERSATION_TTL_MINUTES * 60)
 LIMITER = RateLimiter(limit=RATE_LIMIT_PER_MINUTE)
 RATES = cost.Rates.from_env(ENV)
@@ -124,6 +143,10 @@ async def _startup() -> None:
     if missing:
         raise SystemExit("Missing knowledge files: " + ", ".join(missing))
     log.info("provider=%s model=%s", PROVIDER.name, MODEL)
+    for name in OVERRIDDEN:
+        log.warning("%s is set in the environment and is DIFFERENT from the "
+                    "value in .env — the environment one is being used. If that "
+                    "is not what you meant, unset it.", name)
     log.info("rate limit=%d/min  conversation cap=%d tokens / %d turns  ttl=%dm",
              RATE_LIMIT_PER_MINUTE, MAX_TOKENS_PER_CONVERSATION,
              MAX_TURNS_PER_CONVERSATION, CONVERSATION_TTL_MINUTES)
@@ -249,13 +272,23 @@ async def chat(body: ChatIn, request: Request) -> Response:
     if conversation is None:
         conversation = STORE.new(stage=P.STAGE_1)
 
-    # A conversation cannot sprawl. Her method ends after the verdict and the
-    # next step, so this ceiling sits well above a real conversation.
-    if conversation.turns >= MAX_TURNS_PER_CONVERSATION:
+    # She is meant to move on: the flow closes by offering to decode another
+    # man. So when she does, put the last man down — his verdict, his turn
+    # count and his stage — before any per-man limit is measured.
+    started_new_man = False
+    if conversation.messages and P.mentions_a_new_man(message):
+        conversation.start_new_man()
+        started_new_man = True
+        log.info("conv=%s moving to man #%d, counters reset",
+                 conversation.id[:8], conversation.man_number)
+
+    # One man cannot be re-litigated indefinitely. This counts only the turns
+    # spent on the man in play, so moving to a new man is never punished.
+    if conversation.turns_this_man >= MAX_TURNS_PER_CONVERSATION:
         return JSONResponse(
-            {"code": "conversation_turn_limit",
-             "detail": "We've covered a lot here. Start a new conversation and "
-                       "tell me about him fresh.",
+            {"code": "man_turn_limit",
+             "detail": "We've been round this one a lot, Queen. Tell me about "
+                       "another man, or start fresh when you're ready.",
              "conversation_id": conversation.id},
             status_code=409, headers=extra)
 
@@ -269,9 +302,9 @@ async def chat(body: ChatIn, request: Request) -> Response:
              "conversation_id": conversation.id},
             status_code=409, headers=extra)
 
-    # Which single decode file is in play, from everything she has said.
-    said = " ".join(m["content"] for m in conversation.messages
-                    if m["role"] == "user")
+    # Which single decode file is in play, from what she has said about THIS
+    # man. Never carried over from the last one.
+    said = " ".join(conversation.her_messages)
     stage = P.resolve_stage(f"{said} {message}", conversation.stage)
     conversation.stage = stage
 
@@ -300,6 +333,8 @@ async def chat(body: ChatIn, request: Request) -> Response:
                 "lesson_loaded": False,
                 "verdict_score": 0.0,
                 "repeat_decode_blocked": True,
+                "started_new_man": False,
+                "man_number": conversation.man_number,
                 "tokens_used": conversation.tokens_used,
                 "tokens_remaining": max(0, MAX_TOKENS_PER_CONVERSATION
                                         - conversation.tokens_used),
@@ -342,11 +377,11 @@ async def chat(body: ChatIn, request: Request) -> Response:
     STORE.touch(conversation)
 
     log.info(
-        "conv=%s stage=%s turn=%d/%d verdict=%s score=%.2f lesson=%s "
+        "conv=%s man=%d stage=%s turn=%d/%d verdict=%s score=%.2f lesson=%s "
         "sys=%dKB fresh=%d write=%d read=%d out=%d $%.5f "
         "conv$%.5f month$%.4f/%.2f %.1fs",
-        conversation.id[:8], stage, conversation.turns,
-        MAX_TURNS_PER_CONVERSATION,
+        conversation.id[:8], conversation.man_number, stage,
+        conversation.turns_this_man, MAX_TURNS_PER_CONVERSATION,
         conversation.verdict_delivered, score, bool(system.lesson),
         system.chars // 1024, reply.fresh_input_tokens, reply.cache_write_tokens,
         reply.cached_input_tokens, reply.output_tokens, turn_usd,
@@ -363,12 +398,14 @@ async def chat(body: ChatIn, request: Request) -> Response:
         "lesson_loaded": bool(system.lesson),
         "verdict_score": round(score, 3),
         "repeat_decode_blocked": False,
+        "started_new_man": started_new_man,
+        "man_number": conversation.man_number,
         "tokens_used": conversation.tokens_used,
         "tokens_remaining": max(0, MAX_TOKENS_PER_CONVERSATION
                                 - conversation.tokens_used),
-        "turns_used": conversation.turns,
-        "turns_remaining": max(0, MAX_TURNS_PER_CONVERSATION
-                               - conversation.turns),
+        "turns_this_man": conversation.turns_this_man,
+        "turns_remaining_this_man": max(0, MAX_TURNS_PER_CONVERSATION
+                                        - conversation.turns_this_man),
     }, headers=extra)
 
 

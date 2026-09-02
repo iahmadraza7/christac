@@ -47,7 +47,11 @@ class Rates:
         return cls(
             input_per_mtok=num("PRICE_INPUT_PER_MTOK", 5.00),
             output_per_mtok=num("PRICE_OUTPUT_PER_MTOK", 25.00),
-            cache_write_per_mtok=num("PRICE_CACHE_WRITE_PER_MTOK", 6.25),
+            # A 1-hour cache costs 2x the input rate to write; the 5-minute
+            # default costs 1.25x. Reads are 0.1x either way.
+            cache_write_per_mtok=num(
+                "PRICE_CACHE_WRITE_PER_MTOK",
+                10.00 if str(env.get("CACHE_TTL", "5m")).strip() == "1h" else 6.25),
             cache_read_per_mtok=num("PRICE_CACHE_READ_PER_MTOK", 0.50),
         )
 
