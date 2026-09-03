@@ -23,9 +23,22 @@ from the same source and are byte-identical in what they contain.
 
 ## Deploy target
 
-**Railway**, from this git repository. `railway.json` holds the build and start
-configuration; nothing needs setting in the dashboard except environment
-variables.
+**Railway**, from this git repository. The start command is declared twice, on
+purpose:
+
+- `Procfile` — what Railway's current builder (Railpack) reads
+- `railway.json` — what the older builder (Nixpacks) read, plus the health
+  check and restart policy, which Railpack still honours
+
+Railway switched builder underneath a working deployment and the next build
+failed with *"No start command detected"*, because Railpack does not take the
+start command from `railway.json`. Keeping both means the repo works whichever
+builder Railway picks, and it travels with the code when the project is handed
+to her account. A test asserts the two never drift apart.
+
+Nothing needs setting in the dashboard except environment variables. If a build
+ever fails that way again, the dashboard's **Settings → Deploy → Custom Start
+Command** is the immediate unblock; put the same line in and redeploy.
 
 Start command (already in `railway.json`):
 

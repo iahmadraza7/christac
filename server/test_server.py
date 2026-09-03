@@ -625,5 +625,30 @@ A.REQUIRE_ORIGIN = _was
 check("and turning it back on closes it again", post({}).status_code == 403)
 
 
+print("\nThe start command is declared in two places and they must agree")
+# Railway changed builder from Nixpacks to Railpack, and Railpack did not read
+# the start command out of railway.json - the deploy failed with "No start
+# command detected". The Procfile is the portable answer, but it means two
+# files now declare the same thing, so they can drift.
+import json as _json
+
+_railway = _json.loads(pathlib.Path("railway.json").read_text(encoding="utf-8"))
+_rj_cmd = _railway["deploy"]["startCommand"]
+_pf = pathlib.Path("Procfile").read_text(encoding="utf-8").strip()
+
+check("the Procfile declares a web process", _pf.startswith("web: "), repr(_pf[:40]))
+_pf_cmd = _pf[len("web: "):]
+check("railway.json and the Procfile start the app the same way",
+      _rj_cmd == _pf_cmd, f"{_rj_cmd!r} vs {_pf_cmd!r}")
+check("the port comes from the host, not a hardcoded number",
+      "$PORT" in _pf_cmd, _pf_cmd)
+check("one worker only - the state, rate limiter and ledger are all in-process",
+      "--workers 1" in _pf_cmd, _pf_cmd)
+check("it points at the app this suite has been exercising",
+      "server.app:app" in _pf_cmd, _pf_cmd)
+check("the Procfile has no carriage returns, which some builders choke on",
+      b"\r" not in pathlib.Path("Procfile").read_bytes())
+
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)
