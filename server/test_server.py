@@ -575,5 +575,55 @@ check("the second man has his full budget",
       f"{moved['tokens_remaining']:,} left")
 
 
+print("\nA POST has to say where it came from")
+fresh()
+NEXT_REPLY["text"] = "Tell me more."
+
+
+def post(headers):
+    return client.post("/api/chat", json={"message": "hi"}, headers=headers)
+
+
+# The hole: a bare script with no headers reached the model and spent her money.
+before = len(CALLS)
+naked = post({})
+check("a request with no headers at all is refused",
+      naked.status_code == 403, str(naked.status_code))
+check("and it never reached the model", len(CALLS) == before)
+check("the refusal names the reason",
+      naked.json()["code"] == "origin_not_allowed")
+
+bad = post({"Origin": "https://evil.example"})
+check("a request from an unlisted site is still refused", bad.status_code == 403)
+
+good = post({"Origin": ORIGIN})
+check("the real page still works", good.status_code == 200, good.text[:120])
+
+# Some browsers leave Origin off a same-origin POST. The page posts to a
+# relative path, so its request is same-origin, and this is the fallback proof.
+sfs = post({"Sec-Fetch-Site": "same-origin"})
+check("a same-origin browser request with no Origin is accepted",
+      sfs.status_code == 200, sfs.text[:120])
+
+before = len(CALLS)
+cross = post({"Sec-Fetch-Site": "cross-site"})
+check("a cross-site request with no Origin is refused",
+      cross.status_code == 403, str(cross.status_code))
+check("and that one never reached the model either", len(CALLS) == before)
+
+# Serving the page spends nothing, so it stays open.
+page = client.get("/")
+check("the page itself still loads with no Origin", page.status_code == 200)
+
+print("\nThe escape hatch, for a browser that sends neither")
+_was = A.REQUIRE_ORIGIN
+A.REQUIRE_ORIGIN = False
+loosened = post({})
+check("turning REQUIRE_ORIGIN off lets a headerless POST through again",
+      loosened.status_code == 200, str(loosened.status_code))
+A.REQUIRE_ORIGIN = _was
+check("and turning it back on closes it again", post({}).status_code == 403)
+
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

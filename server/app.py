@@ -127,6 +127,11 @@ CONVERSATION_TTL_MINUTES = _int("CONVERSATION_TTL_MINUTES", 120)
 VERDICT_MATCH_THRESHOLD = _float("VERDICT_MATCH_THRESHOLD", 0.35)
 TRUST_PROXY = (ENV.get("TRUST_PROXY") or "false").strip().lower() == "true"
 
+# A POST must identify where it came from. Set false only if a real visitor's
+# browser turns out to send neither Origin nor Sec-Fetch-Site on a same-origin
+# POST - it reopens the hole, so change it back once the browser is known.
+REQUIRE_ORIGIN = (ENV.get("REQUIRE_ORIGIN") or "true").strip().lower() == "true"
+
 # --- cost and overuse controls ------------------------------------------
 # Her method ends after the verdict and the next step, so a real conversation
 # is a handful of turns. This sits well above that but still stops a runaway.
@@ -185,6 +190,7 @@ async def _startup() -> None:
         log.warning("the monthly ceiling is already reached — the service will "
                     "refuse every message until the ceiling is raised or the "
                     "month rolls over")
+    log.info("POST requires a named origin: %s", REQUIRE_ORIGIN)
     if ALLOWED_ORIGINS:
         log.info("allowed origins: %s", ", ".join(ALLOWED_ORIGINS))
     else:
@@ -197,11 +203,43 @@ async def _startup() -> None:
 # Origin allowlist, CORS and framing
 # ---------------------------------------------------------------------------
 def origin_allowed(origin: str | None) -> bool:
-    # No Origin header means a same-origin or non-browser request; the browser
-    # only omits it for same-origin GETs, which the allowlist is not for.
+    """
+    For GET and for the CORS preflight. An absent Origin is fine here: the page
+    itself has to load, and serving it spends nothing.
+    """
     if not origin:
         return True
     return origin.rstrip("/") in ALLOWED_ORIGINS
+
+
+def post_allowed(request: Request) -> tuple[bool, str]:
+    """
+    Whether a POST may spend her credit.
+
+    A browser says where it came from; a bare script does not. Either counts:
+
+      - an Origin header that is on the allowlist, or
+      - Sec-Fetch-Site: same-origin, which browsers send even in the few cases
+        where they leave Origin off a same-origin POST. The page posts to a
+        relative path, so its request is same-origin, and this is the belt to
+        the Origin brace.
+
+    Neither present means nothing identified itself, and it is refused.
+
+    What this does NOT do: stop someone who opens the page, reads the header
+    and sends it themselves. Origin is trivially forgeable outside a browser.
+    It closes the naked case. The spend ceiling and the rate limit are what
+    actually bound the damage.
+    """
+    origin = request.headers.get("origin")
+    if origin:
+        return origin.rstrip("/") in ALLOWED_ORIGINS, "origin"
+    if not REQUIRE_ORIGIN:
+        # The escape hatch, for the day a real visitor's browser sends neither.
+        return True, "origin not required"
+    if request.headers.get("sec-fetch-site") == "same-origin":
+        return True, "sec-fetch-site"
+    return False, "nothing identified the caller"
 
 
 def cors_headers(origin: str | None) -> dict:
@@ -262,8 +300,10 @@ async def chat(body: ChatIn, request: Request) -> Response:
     origin = request.headers.get("origin")
     extra = cors_headers(origin)
 
-    if not origin_allowed(origin):
-        log.warning("refused origin %s", origin)
+    allowed, why = post_allowed(request)
+    if not allowed:
+        log.warning("refused POST: %s (origin=%r sec-fetch-site=%r)", why, origin,
+                    request.headers.get("sec-fetch-site"))
         return JSONResponse(
             {"code": "origin_not_allowed",
              "detail": "This page is not allowed to be used from that domain."},
@@ -407,10 +447,10 @@ async def chat(body: ChatIn, request: Request) -> Response:
     STORE.touch(conversation)
 
     log.info(
-        "conv=%s man=%d stage=%s turn=%d/%d verdict=%s score=%.2f lesson=%s "
+        "conv=%s via=%s man=%d stage=%s turn=%d/%d verdict=%s score=%.2f lesson=%s "
         "sys=%dKB fresh=%d write=%d read=%d out=%d $%.5f tok=%d/%d "
         "conv$%.5f month$%.4f/%.2f %.1fs",
-        conversation.id[:8], conversation.man_number, stage,
+        conversation.id[:8], why, conversation.man_number, stage,
         conversation.turns_this_man, MAX_TURNS_PER_CONVERSATION,
         conversation.verdict_delivered, score, bool(system.lesson),
         system.chars // 1024, reply.fresh_input_tokens, reply.cache_write_tokens,

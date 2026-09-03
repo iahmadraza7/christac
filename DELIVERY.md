@@ -70,6 +70,7 @@ passes it to uvicorn.
 |---|---|---|
 | `MONTHLY_SPEND_CEILING_USD` | `50.00` | Past this the service returns 503 and calls nothing |
 | `TRUST_PROXY` | `false` | **Set to `true` on Railway.** Behind its proxy the socket address is the proxy, so per-IP rate limiting needs `X-Forwarded-For` |
+| `REQUIRE_ORIGIN` | `true` | A POST must carry an allowlisted `Origin`, or `Sec-Fetch-Site: same-origin`. Stops a bare script spending her credit. Flip to `false` from the dashboard if a real browser is refused — it takes effect on restart, no redeploy |
 | `SPEND_LEDGER_PATH` | `server/.spend.json` | See the warning below |
 
 ### Tuning, safe to leave alone
