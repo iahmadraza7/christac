@@ -8,6 +8,9 @@ from __future__ import annotations
 
 import os
 import sys
+import json
+import shutil
+import subprocess
 
 # Configure before importing the app: it reads its settings at import time.
 import tempfile
@@ -648,6 +651,28 @@ check("it points at the app this suite has been exercising",
       "server.app:app" in _pf_cmd, _pf_cmd)
 check("the Procfile has no carriage returns, which some builders choke on",
       b"\r" not in pathlib.Path("Procfile").read_bytes())
+
+
+print("\nThe chat page renders her emphasis (run in node, a real JS engine)")
+# The renderer lives in chat.html and only a JS engine can judge it, so the
+# real function is lifted out of the shipped page and exercised there rather
+# than a copy of it. She was seeing the raw asterisks in "**...**".
+_blocks = [b for _st in P.STAGES for b in P.verdict_blocks(_st)]
+_bf = pathlib.Path(tempfile.mkdtemp()) / "blocks.json"
+_bf.write_text(json.dumps(_blocks, ensure_ascii=False), encoding="utf-8")
+_node = shutil.which("node")
+if not _node:
+    print("  SKIP  node is not installed here, so the page renderer was not exercised")
+else:
+    _r = subprocess.run(
+        [_node, "server/test_render.js", "server/static/chat.html", str(_bf)],
+        capture_output=True, text=True, encoding="utf-8")
+    for _line in (_r.stdout or "").splitlines():
+        _t = _line.strip()
+        if _t.startswith(("pass", "FAIL", "CHANGED")):
+            print("  " + _t)
+    check("every check on the page renderer passes", _r.returncode == 0,
+          ((_r.stdout or "") + (_r.stderr or ""))[-400:])
 
 
 print(f"\n{PASSED} passed, {FAILED} failed")

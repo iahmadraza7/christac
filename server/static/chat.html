@@ -102,11 +102,41 @@
   var conversationId = null;
   try { conversationId = sessionStorage.getItem(KEY); } catch (e) {}
 
+  // Her replies carry emphasis - "**My Queen... this isn't looking good.**" -
+  // and showing the asterisks raw is what she reported. Only bold and italic
+  // are handled, because those are the only two her material ever uses: her
+  // written blocks hold 42 "**" pairs and 18 "*" pairs, and not one "_"
+  // anywhere, so underscores are left alone rather than risking a false italic.
+  var ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) { return ESCAPES[c]; });
+  }
+
+  // Escaping happens FIRST and without exception, so the only tags that can
+  // ever reach the page are the four this function writes itself. Anything the
+  // model emits that looks like HTML arrives as visible text.
+  function withEmphasis(text) {
+    var safe = escapeHtml(text);
+    // Bold before italic, so the inner asterisks of "**x**" are gone by the
+    // time single asterisks are considered.
+    safe = safe.replace(/\*\*([\s\S]+?)\*\*/g, "<strong>$1</strong>");
+    // Italic stays on one line and holds no asterisks, so an unpaired marker
+    // somewhere else in the reply cannot reach across and swallow a paragraph.
+    safe = safe.replace(/\*([^*\n]+?)\*/g, "<em>$1</em>");
+    return safe;
+  }
+
   function add(text, kind) {
     var row = document.createElement("div");
     row.className = "msg " + kind;
     var bubble = document.createElement("div");
-    bubble.textContent = text;
+    if (kind === "from-it") {
+      bubble.innerHTML = withEmphasis(text);
+    } else {
+      // Her own words, and our error notes, stay exactly as typed.
+      bubble.textContent = text;
+    }
     row.appendChild(bubble);
     log.appendChild(row);
     log.scrollTop = log.scrollHeight;
