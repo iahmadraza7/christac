@@ -4,6 +4,7 @@
 # Build and run artefacts
 __pycache__/
 results/
+results-before-input-fix/
 
 # Delivery archives built for hand-off. Rebuilt on demand, not source.
 *.zip
