@@ -1,0 +1,3 @@
+# The start command must reach the builder with Unix line endings. A trailing
+# carriage return becomes part of the command and the container fails to start.
+Procfile text eol=lf
