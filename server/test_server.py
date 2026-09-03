@@ -21,7 +21,7 @@ os.environ.update({
     "ANTHROPIC_API_KEY": "test-key",
     "ALLOWED_ORIGINS": "https://her-site.kajabi.com,https://www.her-site.com",
     "RATE_LIMIT_PER_MINUTE": "5",
-    "MAX_TOKENS_PER_CONVERSATION": "1000",
+    "MAX_TOKENS_PER_CONVERSATION": "1500000",
     "CONVERSATION_TTL_MINUTES": "60",
     "VERDICT_MATCH_THRESHOLD": "0.35",
     "MAX_TURNS_PER_CONVERSATION": "40",
@@ -51,8 +51,14 @@ class FakeProvider(providers.Provider):
     async def call(self, system, messages, cache_key):
         CALLS.append({"system": system, "messages": list(messages),
                       "cache_key": cache_key})
-        return providers.Reply(text=NEXT_REPLY["text"], input_tokens=100,
-                               output_tokens=20, cached_input_tokens=80)
+        # Bill in proportion to what is actually sent. A flat number here is
+        # why the per-man token bug went unnoticed: every turn looked cheap,
+        # so no test ever felt the lesson file being re-sent each turn.
+        sent = system.chars + sum(len(m["content"]) for m in messages)
+        return providers.Reply(text=NEXT_REPLY["text"],
+                               input_tokens=int(sent / 3.111),
+                               output_tokens=max(1, len(NEXT_REPLY["text"]) // 4),
+                               cached_input_tokens=0)
 
 
 A.PROVIDER = FakeProvider("k", "test-model", 1024)
@@ -197,8 +203,10 @@ check("6th and 7th refused", codes[5:] == [429, 429], str(codes))
 last = say("hi")
 check("refusal carries Retry-After", "retry-after" in last.headers)
 
-print("\nHard token cap per conversation")
+print("\nHard token cap per man")
 fresh()
+_real_cap = A.MAX_TOKENS_PER_CONVERSATION
+A.MAX_TOKENS_PER_CONVERSATION = 40_000   # lowered here only, to reach it fast
 r = say("hello")
 cid = r.json()["conversation_id"]
 seen = None
@@ -212,9 +220,10 @@ check("conversation is cut off at the cap", seen is not None)
 if seen:
     check("cap refusal names the reason", seen["code"] == "conversation_limit")
 conv = A.STORE.get(cid)
-check("spend never exceeded the configured cap",
-      conv is None or conv.tokens_used <= 1000 + 120,
-      f"used {conv.tokens_used if conv else '?'}")
+check("no turn was bought once the cap was reached",
+      conv is None or conv.tokens_this_man <= 40_000 + 60_000,
+      f"used {conv.tokens_this_man if conv else '?'}")
+A.MAX_TOKENS_PER_CONVERSATION = _real_cap
 
 print("\nAnthropic marks the system prompt as cacheable")
 captured = {}
@@ -510,6 +519,60 @@ check("a backslash that is not an escape is left alone",
       A.load_env(_win)["A_WINDOWS_PATH"]
       == "C:" + chr(92) + "data" + chr(92) + "spend.json",
       repr(A.load_env(_win).get("A_WINDOWS_PATH")))
+
+
+print("\nA normal conversation never reaches the token cap")
+# This is the bug she hit live: once a verdict lands every turn carries the
+# lesson file, and the old 250,000 cap was gone after four or five of them.
+fresh()
+cid = say("Stage 1. His bio is blank and there are photos of him with other "
+          "women.").json()["conversation_id"]
+NEXT_REPLY["text"] = P.verdict_blocks(P.STAGE_1)[0]
+after_verdict = say("Yes, that is him.", cid).json()
+check("a verdict landed, so the lesson now rides on every turn",
+      after_verdict["verdict_delivered"] is True)
+
+codes = []
+for i in range(8):
+    A.LIMITER._hits.clear()
+    A.LEDGER._usd = 0.0                 # the ceiling is not what is under test
+    NEXT_REPLY["text"] = f"Follow up number {i} in her voice, worded freshly."
+    codes.append(say(f"Tell me more about the {i} thing he did.", cid).status_code)
+check("eight follow-up turns after the verdict all go through",
+      codes == [200] * 8, str(codes))
+
+conv = A.STORE.get(cid)
+check("the lesson really was being carried each turn",
+      CALLS[-1]["system"].lesson is not None)
+per_turn = CALLS[-1]["system"].chars / 3.111
+check("each of those turns is genuinely expensive",
+      per_turn > 40_000, f"{per_turn:,.0f} tokens a turn")
+check("and the whole thing still sits well under the cap",
+      conv.tokens_this_man < A.MAX_TOKENS_PER_CONVERSATION,
+      f"{conv.tokens_this_man:,} of {A.MAX_TOKENS_PER_CONVERSATION:,}")
+check("the old 250,000 would have cut this conversation off",
+      conv.tokens_this_man > 250_000,
+      f"only reached {conv.tokens_this_man:,}, so this no longer proves the bug")
+
+print("\nA new man starts with a clean token count")
+before = conv.tokens_this_man
+NEXT_REPLY["text"] = "What stage are you in with this man, Queen?"
+A.LIMITER._hits.clear()
+A.LEDGER._usd = 0.0
+moved = say("I want to decode another man now.", cid).json()
+conv = A.STORE.get(cid)
+check("she was moved on to a second man", conv.man_number == 2, str(conv.man_number))
+check("his spend did not follow her",
+      conv.tokens_this_man < before,
+      f"{conv.tokens_this_man:,} vs the first man's {before:,}")
+check("what the page is told matches the man in play",
+      moved["tokens_used"] == conv.tokens_this_man)
+check("the session total still counts everything spent",
+      conv.tokens_total > conv.tokens_this_man,
+      f"total {conv.tokens_total:,}, this man {conv.tokens_this_man:,}")
+check("the second man has his full budget",
+      moved["tokens_remaining"] > A.MAX_TOKENS_PER_CONVERSATION - 200_000,
+      f"{moved['tokens_remaining']:,} left")
 
 
 print(f"\n{PASSED} passed, {FAILED} failed")

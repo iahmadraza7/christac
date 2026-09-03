@@ -25,7 +25,7 @@ class Conversation:
     stage: str | None
     verdict_delivered: bool = False
     verdict_turn: int | None = None
-    tokens_used: int = 0
+    tokens_total: int = 0            # the whole session, for the log only
     usd_spent: float = 0.0
     repeats_blocked: int = 0
     messages: list[dict] = field(default_factory=list)
@@ -35,6 +35,7 @@ class Conversation:
     # that — so the turn limit counts this man's turns, not the whole session.
     man_number: int = 1
     man_started_at: int = 0          # index into messages where this man began
+    tokens_this_man: int = 0         # what the cap is measured against
 
     @property
     def turns(self) -> int:
@@ -67,6 +68,9 @@ class Conversation:
         self.verdict_delivered = False
         self.verdict_turn = None
         self.stage = None
+        # His spend was his. Carrying it over is what cut a second decode
+        # short after the first one had used most of the budget.
+        self.tokens_this_man = 0
 
 
 class ConversationStore:

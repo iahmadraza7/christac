@@ -104,7 +104,19 @@ ALLOWED_ORIGINS = [o.strip().rstrip("/")
                    for o in (ENV.get("ALLOWED_ORIGINS") or "").split(",")
                    if o.strip()]
 RATE_LIMIT_PER_MINUTE = _int("RATE_LIMIT_PER_MINUTE", 12)
-MAX_TOKENS_PER_CONVERSATION = _int("MAX_TOKENS_PER_CONVERSATION", 250_000)
+# Per man, not per session, like the turn limit above. 1,500,000 is 1.27x the
+# worst a man can cost inside the 20-turn limit: Stage 1 carries the largest
+# lesson file, 56,843 tokens a turn once a verdict lands, and 19 such turns
+# plus the growing history reach 1,179,214. So the turn limit always fires
+# first and this stays a backstop against something unexpected - a lesson file
+# growing, say - rather than a wall a real conversation hits.
+#
+# It is not the money guard. A full 20-turn man costs about $1, almost all of
+# it cache reads; MONTHLY_SPEND_CEILING_USD is what actually stops the bill.
+#
+# The old 250,000 was reached after 4.4 post-verdict turns, which is what cut
+# her conversation off.
+MAX_TOKENS_PER_CONVERSATION = _int("MAX_TOKENS_PER_CONVERSATION", 1_500_000)
 # 2048, not 1024. Her longer verdicts reach ~650 output tokens, and the
 # positioning line comes last in the response shape, so a reply cut short
 # loses exactly that line. Output is billed on what is generated, not on
@@ -164,7 +176,7 @@ async def _startup() -> None:
         log.warning("%s is set in the environment and is DIFFERENT from the "
                     "value in .env — the environment one is being used. If that "
                     "is not what you meant, unset it.", name)
-    log.info("rate limit=%d/min  conversation cap=%d tokens / %d turns  ttl=%dm",
+    log.info("rate limit=%d/min  per-man cap=%d tokens / %d turns  ttl=%dm",
              RATE_LIMIT_PER_MINUTE, MAX_TOKENS_PER_CONVERSATION,
              MAX_TURNS_PER_CONVERSATION, CONVERSATION_TTL_MINUTES)
     log.info("monthly ceiling $%.2f, spent so far $%.4f, ledger %s",
@@ -311,7 +323,7 @@ async def chat(body: ChatIn, request: Request) -> Response:
 
     # The hard cap. Checked before the call so a conversation that is already
     # over budget cannot buy one more expensive turn.
-    if conversation.tokens_used >= MAX_TOKENS_PER_CONVERSATION:
+    if conversation.tokens_this_man >= MAX_TOKENS_PER_CONVERSATION:
         return JSONResponse(
             {"code": "conversation_limit",
              "detail": "This conversation has reached its limit. Start a new "
@@ -352,9 +364,9 @@ async def chat(body: ChatIn, request: Request) -> Response:
                 "repeat_decode_blocked": True,
                 "started_new_man": False,
                 "man_number": conversation.man_number,
-                "tokens_used": conversation.tokens_used,
+                "tokens_used": conversation.tokens_this_man,
                 "tokens_remaining": max(0, MAX_TOKENS_PER_CONVERSATION
-                                        - conversation.tokens_used),
+                                        - conversation.tokens_this_man),
             }, headers=extra)
 
     system = P.build(stage, conversation.verdict_delivered)
@@ -377,7 +389,8 @@ async def chat(body: ChatIn, request: Request) -> Response:
 
     conversation.messages = [*turn_messages,
                              {"role": "assistant", "content": reply.text}]
-    conversation.tokens_used += reply.total_tokens
+    conversation.tokens_this_man += reply.total_tokens
+    conversation.tokens_total += reply.total_tokens
     turn_usd = RATES.usd_for(reply)
     conversation.usd_spent += turn_usd
     month_usd = LEDGER.add(turn_usd)
@@ -395,13 +408,14 @@ async def chat(body: ChatIn, request: Request) -> Response:
 
     log.info(
         "conv=%s man=%d stage=%s turn=%d/%d verdict=%s score=%.2f lesson=%s "
-        "sys=%dKB fresh=%d write=%d read=%d out=%d $%.5f "
+        "sys=%dKB fresh=%d write=%d read=%d out=%d $%.5f tok=%d/%d "
         "conv$%.5f month$%.4f/%.2f %.1fs",
         conversation.id[:8], conversation.man_number, stage,
         conversation.turns_this_man, MAX_TURNS_PER_CONVERSATION,
         conversation.verdict_delivered, score, bool(system.lesson),
         system.chars // 1024, reply.fresh_input_tokens, reply.cache_write_tokens,
         reply.cached_input_tokens, reply.output_tokens, turn_usd,
+        conversation.tokens_this_man, MAX_TOKENS_PER_CONVERSATION,
         conversation.usd_spent, month_usd, MONTHLY_CEILING_USD,
         time.time() - started,
     )
@@ -417,9 +431,9 @@ async def chat(body: ChatIn, request: Request) -> Response:
         "repeat_decode_blocked": False,
         "started_new_man": started_new_man,
         "man_number": conversation.man_number,
-        "tokens_used": conversation.tokens_used,
+        "tokens_used": conversation.tokens_this_man,
         "tokens_remaining": max(0, MAX_TOKENS_PER_CONVERSATION
-                                - conversation.tokens_used),
+                                - conversation.tokens_this_man),
         "turns_this_man": conversation.turns_this_man,
         "turns_remaining_this_man": max(0, MAX_TURNS_PER_CONVERSATION
                                         - conversation.turns_this_man),
