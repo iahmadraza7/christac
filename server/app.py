@@ -38,17 +38,30 @@ STATIC = HERE / "static"
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-def load_env() -> dict:
+def unescape(value: str) -> str:
+    """
+    Turn a written-out "\n" into a real newline.
+
+    A setting is one line, so a value that needs a line break has to write it
+    rather than take one. Writing it across several lines instead loses
+    everything after the first: the parser reads line by line and a
+    continuation line has no "=" in it, so it is skipped in silence. That is
+    how her approved repeat-decode reply lost its second sentence.
+    """
+    return value.replace(r"\n", chr(10))
+
+
+def load_env(env_file: Path | None = None) -> dict:
     """.env next to the project, with real environment variables winning."""
     values = {}
-    env_file = ROOT / ".env"
+    env_file = env_file or (ROOT / ".env")
     if env_file.is_file():
         for line in env_file.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
                 continue
             k, v = line.split("=", 1)
-            values[k.strip()] = v.strip().strip('"').strip("'")
+            values[k.strip()] = unescape(v.strip().strip('"').strip("'"))
     # A real environment variable wins over .env, which is the normal
     # deployment convention. It is also a trap: a stray ANTHROPIC_API_KEY left
     # in a shell silently replaces the key in .env, and the only symptom is the
@@ -115,7 +128,7 @@ REPEAT_SIMILARITY = _float("REPEAT_DECODE_SIMILARITY", 0.60)
 
 # Approved by her as drafted.
 # Overridable from .env so she can replace it without a code change.
-REPEAT_REPLY = (ENV.get("REPEAT_DECODE_REPLY") or
+REPEAT_REPLY = (unescape(ENV.get("REPEAT_DECODE_REPLY") or "") or
                 "We already read him, Queen. Going back over it won't change what "
                 "he showed you.\n\n"
                 "Want to decode another man?")

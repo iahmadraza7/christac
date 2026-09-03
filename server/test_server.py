@@ -471,5 +471,46 @@ check("a short title-case heading is taken whole",
       == "No Intimacy Until the Vetting Process Is Complete")
 
 
+print("\nA setting can hold more than one line")
+# Her approved reply is two sentences with a blank line between them. It has to
+# survive a round trip through .env, where a value is one line.
+shipped = A.load_env(pathlib.Path(".env.example")).get("REPEAT_DECODE_REPLY", "")
+check("the shipped example keeps her first sentence",
+      "We already read him, Queen." in shipped, repr(shipped))
+check("the shipped example keeps her second sentence",
+      "Want to decode another man?" in shipped, repr(shipped))
+check("the shipped example turns the written break into a real newline",
+      "\n\n" in shipped, repr(shipped))
+check("no written-out escape is left in the loaded value",
+      "\\n" not in shipped, repr(shipped))
+check("the shipped example matches the wording built into the code",
+      shipped == A.REPEAT_REPLY, f"{shipped!r} vs {A.REPEAT_REPLY!r}")
+
+_env_dir = tempfile.mkdtemp()
+_one_line = pathlib.Path(_env_dir) / "one-line.env"
+_one_line.write_text("REPEAT_DECODE_REPLY=first line.\\n\\nsecond line.\n",
+                     encoding="utf-8")
+check("a written break loads as a real newline",
+      A.load_env(_one_line)["REPEAT_DECODE_REPLY"] == "first line.\n\nsecond line.",
+      repr(A.load_env(_one_line)["REPEAT_DECODE_REPLY"]))
+
+# The bug this replaced: a value written across three lines lost everything
+# after the first, because a continuation line has no "=" and is skipped.
+_spanning = pathlib.Path(_env_dir) / "spanning.env"
+_spanning.write_text("REPEAT_DECODE_REPLY=first line.\n\nsecond line.\n", encoding="utf-8")
+check("a value spread over several lines still only reads the first, "
+      "which is why the escape is needed",
+      A.load_env(_spanning)["REPEAT_DECODE_REPLY"] == "first line.")
+
+# A Windows path must not be mangled by the same rule.
+_win = pathlib.Path(_env_dir) / "win.env"
+_win.write_text("A_WINDOWS_PATH=C:" + chr(92) + "data" + chr(92) + "spend.json"
+                + chr(10), encoding="utf-8")
+check("a backslash that is not an escape is left alone",
+      A.load_env(_win)["A_WINDOWS_PATH"]
+      == "C:" + chr(92) + "data" + chr(92) + "spend.json",
+      repr(A.load_env(_win).get("A_WINDOWS_PATH")))
+
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)
