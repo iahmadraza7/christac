@@ -289,6 +289,84 @@ def compose_lessons(stage: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Her positioning names
+#
+# The instructions ask the assistant, after a verdict, to name the High League
+# Positioning her own behaviour broke - in her wording, taken from the lessons,
+# never from memory. But the lessons only load after a verdict, so on the turn
+# the verdict lands the names are not in front of it and it correctly says
+# nothing. Measured: of two live test cases, one named the positioning and the
+# other gave the right coaching without ever naming it.
+#
+# So the names alone - five short headings, no teaching body - are lifted out
+# of her lesson file and put in the always-loaded part of the prompt. Each one
+# describes what SHE does, never what he does, so they cannot tilt a verdict
+# about his behaviour. That is why this does not breach the rule that lesson
+# material stays out until a verdict.
+#
+# Web app only. Her ChatGPT cannot inject anything per request and its
+# instructions field is near the 8,000 character limit, so that file is left
+# exactly as it is.
+# ---------------------------------------------------------------------------
+_POSITIONING = re.compile(r"POSITIONING\s*([1-9])\s*[:\-–—]?\s*(.+)", re.I)
+
+# Above this length the heading has her teaching running on after the name.
+_NAME_MAX = 60
+
+
+def _positioning_name(raw: str) -> str:
+    """
+    Her name for one positioning, without the teaching that follows it.
+
+    At Stages 3 and 4 the heading sits on its own line and is taken whole. At
+    Stages 1 and 2 her source runs the body straight on after the name, so the
+    leading run of shouted words is the name and the first ordinary word ends
+    it.
+    """
+    raw = raw.strip()
+    if len(raw) <= _NAME_MAX:
+        return raw.strip(" .-–—")
+    kept = []
+    for word in raw.split():
+        if any(c.islower() for c in word):
+            break
+        kept.append(word)
+    name = " ".join(kept).strip(" .-–—")
+    return name or raw[:_NAME_MAX].strip()
+
+
+def positioning_names(stage: str) -> list[str]:
+    """The positioning names for this stage, in her wording, in her order."""
+    text = compose_lessons(stage)
+    found: dict[str, str] = {}
+    for line in text.split(NEWLINE):
+        for m in _POSITIONING.finditer(line):
+            n = m.group(1)
+            if n not in found:
+                name = _positioning_name(m.group(2))
+                if name:
+                    found[n] = name
+    return [found[k] for k in sorted(found)]
+
+
+def positioning_block(stage: str) -> str:
+    """The names, framed so it knows they are hers and what they are for."""
+    names = positioning_names(stage)
+    if not names:
+        return ""
+    listed = NEWLINE.join(f"{i}. {n}" for i, n in enumerate(names, start=1))
+    intro = (
+        "These are the High League Positioning names from her lessons for this "
+        "stage, in her wording. They are in front of you now." + NEWLINE * 2
+        + "Use them only for the positioning rule in the instructions, after a "
+        "verdict. Each one describes what SHE does, never what he does, so they "
+        "play no part in reaching a verdict about him." + NEWLINE * 2
+    )
+    return (DELIMITER.format(name="HIGH LEAGUE POSITIONINGS FOR THIS STAGE")
+            + intro + listed)
+
+
+# ---------------------------------------------------------------------------
 # Assembly
 # ---------------------------------------------------------------------------
 @dataclass
@@ -323,7 +401,8 @@ def build(stage: str, verdict_delivered: bool) -> SystemPrompt:
     instructions = read_file(INSTRUCTIONS_FILE).rstrip()
     decode_name = DECODE_FILE[stage]
     decode = read_file(decode_name).strip()
-    prefix = instructions + DELIMITER.format(name=decode_name) + decode
+    prefix = (instructions + DELIMITER.format(name=decode_name) + decode
+              + positioning_block(stage))
 
     lesson = None
     if verdict_delivered:

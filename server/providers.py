@@ -22,11 +22,14 @@ The model id is never hardcoded. It comes from the environment.
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass
 
 import httpx
 
 from .prompt import SystemPrompt
+
+log = logging.getLogger("decoder")
 
 TIMEOUT = httpx.Timeout(120.0, connect=10.0)
 
@@ -130,6 +133,12 @@ class AnthropicProvider(Provider):
         if not text:
             raise ProviderError(f"empty reply (stop_reason="
                                 f"{body.get('stop_reason')})")
+        if body.get("stop_reason") == "max_tokens":
+            # The reply was cut mid-sentence. It still reaches the woman, so do
+            # not throw it away, but say so: the response shape puts her
+            # positioning last, and that is the first thing a cut reply loses.
+            log.warning("reply hit max_tokens (%d) and was truncated - raise "
+                        "MAX_OUTPUT_TOKENS", self.max_output_tokens)
         u = body.get("usage", {})
         cached = u.get("cache_read_input_tokens", 0) or 0
         written = u.get("cache_creation_input_tokens", 0) or 0

@@ -428,5 +428,48 @@ check("but she can still move to another man afterwards",
 A.MAX_TURNS_PER_CONVERSATION = 40
 
 
+print("\nHer positioning names reach the prompt before a verdict")
+for st in P.STAGES:
+    names = P.positioning_names(st)
+    check(f"stage {st}: five names extracted", len(names) == 5, str(names))
+    lesson_text = P.compose_lessons(st)
+    check(f"stage {st}: every name is hers, found in her lesson text",
+          all(n in lesson_text for n in names),
+          str([n for n in names if n not in lesson_text]))
+
+pre = P.build(P.STAGE_1, False)
+check("the names are in the always-loaded part, so they land with the verdict",
+      "HE LEADS ALL FORWARD MOVEMENT" in pre.prefix)
+check("no lesson body is attached before a verdict", pre.lesson is None)
+check("the block carries names only, no teaching",
+      len(P.positioning_block(P.STAGE_1)) < 1200,
+      str(len(P.positioning_block(P.STAGE_1))))
+
+# The whole point of reading them per stage rather than hardcoding.
+s1 = P.positioning_names(P.STAGE_1)
+s3 = P.positioning_names(P.STAGE_3)
+s4 = P.positioning_names(P.STAGE_4)
+check("stage 3 words its fourth positioning differently from stage 1",
+      s1[3] != s3[3], f"{s1[3]!r} vs {s3[3]!r}")
+check("stage 4 words its third positioning differently from stage 1",
+      s1[2] != s4[2], f"{s1[2]!r} vs {s4[2]!r}")
+check("stage 3 keeps its own wording for the exclusivity slot",
+      "COLLAPSING INTO THE GF STAGE" in s3[3], s3[3])
+check("stage 4 keeps its own wording for the vetting slot",
+      "FINAL VETTING STAGE" in s4[2], s4[2])
+
+check("a run-on heading is cut at the name, not the teaching",
+      P._positioning_name(
+          "ACCESS IS EARNED Access includes everything: dates, texting, phone "
+          "calls, relationship-style communication") == "ACCESS IS EARNED")
+check("a trailing dash is trimmed",
+      P._positioning_name(
+          "THERE IS NO EXCLUSIVITY UNTIL ENGAGEMENT- You date multiple men.")
+      == "THERE IS NO EXCLUSIVITY UNTIL ENGAGEMENT")
+check("a short title-case heading is taken whole",
+      P._positioning_name("No Intimacy Until the Vetting Process Is Complete")
+      == "No Intimacy Until the Vetting Process Is Complete")
+
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

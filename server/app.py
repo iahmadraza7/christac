@@ -92,7 +92,11 @@ ALLOWED_ORIGINS = [o.strip().rstrip("/")
                    if o.strip()]
 RATE_LIMIT_PER_MINUTE = _int("RATE_LIMIT_PER_MINUTE", 12)
 MAX_TOKENS_PER_CONVERSATION = _int("MAX_TOKENS_PER_CONVERSATION", 250_000)
-MAX_OUTPUT_TOKENS = _int("MAX_OUTPUT_TOKENS", 1024)
+# 2048, not 1024. Her longer verdicts reach ~650 output tokens, and the
+# positioning line comes last in the response shape, so a reply cut short
+# loses exactly that line. Output is billed on what is generated, not on
+# the ceiling, so a higher ceiling costs nothing when replies stay short.
+MAX_OUTPUT_TOKENS = _int("MAX_OUTPUT_TOKENS", 2048)
 MAX_MESSAGE_CHARS = _int("MAX_MESSAGE_CHARS", 4000)
 CONVERSATION_TTL_MINUTES = _int("CONVERSATION_TTL_MINUTES", 120)
 VERDICT_MATCH_THRESHOLD = _float("VERDICT_MATCH_THRESHOLD", 0.35)
