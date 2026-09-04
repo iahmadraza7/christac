@@ -409,7 +409,8 @@ async def chat(body: ChatIn, request: Request) -> Response:
                                         - conversation.tokens_this_man),
             }, headers=extra)
 
-    system = P.build(stage, conversation.verdict_delivered)
+    system = P.build(stage, conversation.verdict_delivered,
+                     conversation.blocks_delivered)
     turn_messages = [*conversation.messages, {"role": "user", "content": message}]
 
     # Cache key groups turns that share a prefix. Stage and whether the lesson
@@ -437,11 +438,16 @@ async def chat(body: ChatIn, request: Request) -> Response:
 
     # Has a verdict landed? Scored against the decode file that was in play for
     # this reply. Once true it stays true for the conversation.
-    score = P.verdict_score(reply.text, stage)
+    block_name, score = P.match_verdict(reply.text, stage)
     newly = False
+    if score >= VERDICT_MATCH_THRESHOLD and block_name:
+        # Written once per man. Recorded here rather than left to the model to
+        # remember, so a second read connects and adds instead of restating.
+        if block_name not in conversation.blocks_delivered:
+            conversation.blocks_delivered.append(block_name)
     if not conversation.verdict_delivered and score >= VERDICT_MATCH_THRESHOLD:
         conversation.verdict_delivered = True
-        conversation.verdict_turn = conversation.turns
+        conversation.verdict_turn = conversation.turns_this_man
         newly = True
 
     STORE.touch(conversation)

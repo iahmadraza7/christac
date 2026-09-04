@@ -36,6 +36,7 @@ class Conversation:
     man_number: int = 1
     man_started_at: int = 0          # index into messages where this man began
     tokens_this_man: int = 0         # what the cap is measured against
+    blocks_delivered: list[str] = field(default_factory=list)
 
     @property
     def turns(self) -> int:
@@ -71,6 +72,8 @@ class Conversation:
         # His spend was his. Carrying it over is what cut a second decode
         # short after the first one had used most of the budget.
         self.tokens_this_man = 0
+        # A new man has been told nothing yet.
+        self.blocks_delivered = []
 
 
 class ConversationStore:

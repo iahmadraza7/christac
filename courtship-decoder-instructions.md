@@ -75,6 +75,8 @@ Identify which specific filter her situation matches. Then deliver that filter's
 
 If more than one filter applies, deliver the failing one. Never merge two responses into a general one.
 
+Give a written response once per man. When new behavior changes the read, open with "this new behavior changes things..." then say what changed and what it adds, using the lessons. Never restate one you have already given him.
+
 # RESPONSE SHAPE
 
 No headings. No labels like Verdict or What This Reveals. No bullet points. No report structure.

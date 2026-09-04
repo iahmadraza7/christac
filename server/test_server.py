@@ -772,5 +772,90 @@ for _st in P.STAGES:
     check(f"stage {_st}: and still reaches the model before a verdict",
           _CLARITY in P.build(_st, False).prefix)
 
+def _INS_NOW():
+    return pathlib.Path("courtship-decoder-instructions.md").read_text(
+        encoding="utf-8")
+
+print("\nA written response is given once per man, then connected to")
+fresh()
+_S1_BLOCKS = P.verdict_block_items(P.STAGE_1)
+_FAIL_NAME, _FAIL_BODY = _S1_BLOCKS[0]
+_OTHER_NAME, _OTHER_BODY = _S1_BLOCKS[2]
+
+check("a block can be named, not just scored",
+      P.match_verdict(_FAIL_BODY, P.STAGE_1)[0] == _FAIL_NAME,
+      str(P.match_verdict(_FAIL_BODY, P.STAGE_1)[0]))
+check("the old scoring still answers the same way",
+      P.verdict_score(_FAIL_BODY, P.STAGE_1) == 1.0)
+check("a reply carrying no block names none",
+      P.match_verdict("What stage are you in with this man, Queen?", P.STAGE_1)
+      == (None, 0.0))
+
+cid = say("Stage 1. His bio is blank and there are photos of him with other "
+          "women.").json()["conversation_id"]
+NEXT_REPLY["text"] = _FAIL_BODY
+first = say("Yes, that is him.", cid).json()
+conv = A.STORE.get(cid)
+check("the block that landed is recorded against the man",
+      conv.blocks_delivered == [_FAIL_NAME], str(conv.blocks_delivered))
+check("nothing was said before it, so nothing was withheld",
+      CALLS[-1]["system"].already_said is None)
+
+NEXT_REPLY["text"] = "this new behavior changes things... and here is what it adds."
+say("He just texted asking me out for Friday.", cid)
+sent = CALLS[-1]["system"]
+check("the next turn is told what he has already been given",
+      sent.already_said is not None and _FAIL_NAME in sent.already_said)
+check("it is told plainly that it cannot be said again",
+      "cannot be said again" in sent.already_said)
+check("and that an unused block is still delivered as written",
+      "still delivered exactly as written" in sent.already_said)
+
+print("\nIt is a per-block rule, not a gag on every written response")
+NEXT_REPLY["text"] = _OTHER_BODY
+say("He has not planned anything for two weeks either.", cid)
+conv = A.STORE.get(cid)
+check("a different block, not yet used for this man, is recorded too",
+      conv.blocks_delivered == [_FAIL_NAME, _OTHER_NAME],
+      str(conv.blocks_delivered))
+NEXT_REPLY["text"] = "Anything else?"
+say("okay", cid)
+_said = CALLS[-1]["system"].already_said
+check("both are now listed back", _FAIL_NAME in _said and _OTHER_NAME in _said)
+check("the same block is never listed twice",
+      _said.count(_FAIL_NAME) == 1)
+
+print("\nThe cached part of the prompt is not disturbed by any of it")
+_plain = P.build(P.STAGE_1, True)
+_with = P.build(P.STAGE_1, True, [_FAIL_NAME])
+check("the prefix is byte for byte the same", _plain.prefix == _with.prefix)
+check("the lesson block is byte for byte the same", _plain.lesson == _with.lesson)
+check("the list rides last, after both", _with.text.endswith(_with.already_said))
+check("and it is small enough to never take a cache breakpoint",
+      len(_with.already_said) < A.MIN_CACHEABLE_CHARS,
+      f"{len(_with.already_said)} vs {A.MIN_CACHEABLE_CHARS}")
+
+print("\nA new man is told nothing about the last one")
+NEXT_REPLY["text"] = "What stage are you in with this man, Queen?"
+A.LIMITER._hits.clear()
+A.LEDGER._usd = 0.0          # the ceiling is not what is under test here
+_moved = say("I want to decode another man now.", cid)
+check("the move itself was served", _moved.status_code == 200,
+      f"HTTP {_moved.status_code}")
+conv = A.STORE.get(cid)
+check("she was moved on", conv.man_number == 2)
+check("what was said to the first man is not carried over",
+      conv.blocks_delivered == [], str(conv.blocks_delivered))
+check("so his written responses are available again for the new man",
+      CALLS[-1]["system"].already_said is None)
+
+print("\nHer connecting line is in the instructions")
+check("the rule is there",
+      "Give a written response once per man" in _INS_NOW())
+check("with her wording for the connection",
+      "this new behavior changes things..." in _INS_NOW())
+check("and it still says an unused response is delivered as written",
+      "using the lessons" in _INS_NOW())
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

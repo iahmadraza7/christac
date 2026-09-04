@@ -167,8 +167,14 @@ _ANY_HEAD = re.compile(r"^#{2,3} ", re.M)
 _SHINGLE_N = 5
 
 
-def verdict_blocks(stage: str) -> list[str]:
-    """Body text of every DELIVER AS WRITTEN block in one decode file."""
+def verdict_block_items(stage: str) -> list[tuple[str, str]]:
+    """
+    Every DELIVER AS WRITTEN block in one decode file, as (name, body).
+
+    The name is the heading with its marker stripped, which is what identifies
+    a block once it has been delivered - "Fail response - Stage 1, Marriage
+    Readiness Filter: Dating Profile" and so on.
+    """
     text = read_file(DECODE_FILE[stage])
     heads = list(_BLOCK_HEAD.finditer(text))
     out = []
@@ -181,8 +187,15 @@ def verdict_blocks(stage: str) -> list[str]:
             end = min(end, heads[i + 1].start())
         body = text[m.end():end].strip().strip("-").strip()
         if body:
-            out.append(body)
+            name = m.group(0).replace("### DELIVER AS WRITTEN", "").strip()
+            name = name.lstrip("-").lstrip().lstrip("\u2014").strip()
+            out.append((name, body))
     return out
+
+
+def verdict_blocks(stage: str) -> list[str]:
+    """Body text of every DELIVER AS WRITTEN block in one decode file."""
+    return [body for _name, body in verdict_block_items(stage)]
 
 
 def _tokens(s: str) -> list[str]:
@@ -195,23 +208,52 @@ def _shingles(tokens: list[str]) -> set[tuple]:
     return {tuple(tokens[i:i + n]) for i in range(len(tokens) - n + 1)}
 
 
-def verdict_score(reply: str, stage: str) -> float:
+def match_verdict(reply: str, stage: str) -> tuple[str | None, float]:
     """
-    How much of the closest written block this reply reproduces, 0.0 to 1.0.
+    Which written block this reply delivered, and how much of it, 0.0 to 1.0.
 
     Containment, not similarity: the reply may add her man's details and still
-    count, but it has to carry the block's own wording to score.
+    count, but it has to carry the block's own wording to score. Knowing WHICH
+    block landed is what lets the service stop it being delivered twice for the
+    same man - the model is never asked to remember what it already said.
     """
     reply_sh = _shingles(_tokens(reply))
     if not reply_sh:
-        return 0.0
-    best = 0.0
-    for block in verdict_blocks(stage):
+        return None, 0.0
+    best_name, best = None, 0.0
+    for name, block in verdict_block_items(stage):
         block_sh = _shingles(_tokens(block))
         if not block_sh:
             continue
-        best = max(best, len(block_sh & reply_sh) / len(block_sh))
-    return best
+        score = len(block_sh & reply_sh) / len(block_sh)
+        if score > best:
+            best_name, best = name, score
+    return best_name, best
+
+
+def verdict_score(reply: str, stage: str) -> float:
+    """How much of the closest written block this reply reproduces."""
+    return match_verdict(reply, stage)[1]
+
+
+def already_said_section(names: list[str]) -> str:
+    """
+    The blocks already given for the man in play, listed for the model.
+
+    Kept last in the prompt and small, so the cached prefix and the lesson
+    block above it are untouched and this costs a few tokens a turn.
+    """
+    if not names:
+        return ""
+    listed = NEWLINE.join(f"- {n}" for n in names)
+    return (
+        DELIMITER.format(name="ALREADY DELIVERED FOR THIS MAN")
+        + "You have already given this man these written responses, so they have "
+          "been said and cannot be said again:" + NEWLINE * 2 + listed + NEWLINE * 2
+        + "Follow the rule in the instructions: do not repeat any of them. A "
+          "written response not on this list is still delivered exactly as "
+          "written."
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -383,10 +425,11 @@ class SystemPrompt:
     prefix: str
     lesson: str | None
     stage: str
+    already_said: str | None = None
 
     @property
     def parts(self) -> list[str]:
-        return [x for x in (self.prefix, self.lesson) if x]
+        return [x for x in (self.prefix, self.lesson, self.already_said) if x]
 
     @property
     def text(self) -> str:
@@ -397,7 +440,8 @@ class SystemPrompt:
         return len(self.text)
 
 
-def build(stage: str, verdict_delivered: bool) -> SystemPrompt:
+def build(stage: str, verdict_delivered: bool,
+          blocks_delivered: list[str] | None = None) -> SystemPrompt:
     instructions = read_file(INSTRUCTIONS_FILE).rstrip()
     decode_name = DECODE_FILE[stage]
     decode = read_file(decode_name).strip()
@@ -408,4 +452,6 @@ def build(stage: str, verdict_delivered: bool) -> SystemPrompt:
     if verdict_delivered:
         lesson = DELIMITER.format(name=LESSON_FILE[stage]) + compose_lessons(stage)
 
-    return SystemPrompt(prefix=prefix, lesson=lesson, stage=stage)
+    return SystemPrompt(prefix=prefix, lesson=lesson, stage=stage,
+                        already_said=already_said_section(blocks_delivered or [])
+                        or None)
