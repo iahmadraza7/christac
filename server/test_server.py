@@ -705,41 +705,72 @@ check("and nowhere else",
               (P.STAGE_2_P2, P.STAGE_3, P.STAGE_4)))
 
 _OPENING = ("My Queen... this man's communication is already revealing that he "
-            "could not be ready for marriage.")
-_CLOSING = ("If he comes back to you, with an actual plan, we can assess but "
-            "Remember... early behavior reveals current capacity.")
+            "may not be ready for marriage.")
+_CLOSING = ("Right now, all that matters is whether he is eager and capable of "
+            "taking you on a first date. That's it.")
 _CLARITY = 'a woman finds herself asking "Where is this going?"'
+_CAUTION = ("Your Majesty... nothing here tells me you need to walk away. But it "
+            "does tell me to come back home to yourself.")
 
+# Item 1. Her new fail response for the one filter it names.
+_S1 = _DECODE[P.STAGE_1]
+check("item 1: her new communication fail response is present, word for word",
+      _S1.count(_OPENING) == 1 and _S1.count(_CLOSING) == 1)
+check("item 1: it says 'may not be ready', the wording from this document",
+      "may not be ready for marriage" in _S1
+      and "could not be ready for marriage" not in _S1)
+check("item 1: her two options survive intact",
+      "1. Release the potential." in _S1 and "2. Stop investing and observe." in _S1)
+check("item 1: the teaching note above it was left alone",
+      "### Teaching Notes for Automatic Failing Signs — Stage 1, Marriage "
+      "Readiness Filter: Communication Before the First Date" in _S1)
+_early = [b for b in P.verdict_blocks(P.STAGE_1) if _OPENING in b]
+check("item 1: it still registers as a verdict, so the lessons unlock",
+      len(_early) == 1 and P.verdict_score(_early[0], P.STAGE_1) >= 0.9)
+
+# Item 2. Her new caution response.
+_S3 = _DECODE[P.STAGE_3]
+check("item 2: her new caution response is present, word for word",
+      _S3.count(_CAUTION) == 1)
+check("item 2: her reworded phrases replaced the old ones",
+      "how to get the ring" in _S3 and "how to get chosen" not in _S3
+      and "instead of hoping" in _S3 and "instead of anticipating" not in _S3)
+_caut = [b for b in P.verdict_blocks(P.STAGE_3) if _CAUTION in b]
+check("item 2: it still registers as a verdict",
+      len(_caut) == 1 and P.verdict_score(_caut[0], P.STAGE_3) >= 0.9)
+
+# Item 3. Gone from every response, in both the plain and the bold form.
 for _st in P.STAGES:
-    _t = _DECODE[_st]
-    check(f"stage {_st}: her softer verdict is present, word for word",
-          _t.count(_OPENING) == 1 and _t.count(_CLOSING) == 1)
-    check(f"stage {_st}: her positioning rule is present, word for word",
-          _t.count(_CLARITY) == 1)
-    check(f"stage {_st}: the early-signal list is still hers to fill",
-          "TO BE FILLED IN" in _t and "(none listed yet)" in _t)
+    check(f"item 3: stage {_st} has no 'Don't change a thing'",
+          "change a thing" not in _DECODE[_st].lower())
+check("item 3: removing it did not unbalance her bold markers",
+      all(_DECODE[st].count("**") % 2 == 0 for st in P.STAGES))
+check("item 3: the sentence it sat beside is untouched",
+      "**Stay in High-League Positioning.**" in _DECODE[P.STAGE_2_P2])
 
-check("the classification was left to her, not guessed at",
-      all("(none listed yet)" in _DECODE[st] for st in P.STAGES))
+# Item 4. The positioning check runs on a pass as well as a fail.
+check("item 4: the positioning check runs on a pass too",
+      "After the verdict, pass or fail," in _INS)
+check("item 4: the instructions still fit her ChatGPT field",
+      len(_INS) < 8000, f"{len(_INS):,} of 8,000")
 
-# The softer verdict is still a verdict, so the lessons unlock behind it.
+# Item 6. The block that named the wrong filter is gone from every file.
 for _st in P.STAGES:
-    _early = [b for b in P.verdict_blocks(_st) if "could not be ready" in b]
-    check(f"stage {_st}: the softer verdict counts as a verdict",
-          len(_early) == 1 and P.verdict_score(_early[0], _st) >= 0.9,
-          str(len(_early)))
+    check(f"item 6: stage {_st} no longer carries the file-level early-signal block",
+          "EARLY SIGNAL FAILING SIGNS" not in _DECODE[_st])
+# The guard that matters: a filter must not announce a filter it is not.
+_S1_PROFILE = _S1[_S1.index("Marriage Readiness Filter: Dating Profile"):
+                  _S1.index("Marriage Readiness Filter: Communication")]
+check("item 6: the dating-profile filter never says 'communication'",
+      "communication" not in _S1_PROFILE.lower(),
+      "a profile decode could name the wrong filter again")
 
-# Appended, never prepended: the tests above pick verdict_blocks(...)[0].
+# Her positioning rule from the previous round is untouched by all this.
 for _st in P.STAGES:
-    check(f"stage {_st}: the new block went to the end, not the front",
-          "could not be ready" not in P.verdict_blocks(_st)[0])
-
-# Her rule says "at any point in courtship", and exactly one decode file is
-# always loaded, so it reaches the model at every stage.
-for _st in P.STAGES:
-    check(f"stage {_st}: the positioning rule reaches the model before a verdict",
+    check(f"stage {_st}: her positioning rule is still there, word for word",
+          _DECODE[_st].count(_CLARITY) == 1)
+    check(f"stage {_st}: and still reaches the model before a verdict",
           _CLARITY in P.build(_st, False).prefix)
-
 
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)
