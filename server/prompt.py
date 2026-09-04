@@ -247,7 +247,7 @@ def already_said_section(names: list[str]) -> str:
         return ""
     listed = NEWLINE.join(f"- {n}" for n in names)
     return (
-        DELIMITER.format(name="ALREADY DELIVERED FOR THIS MAN")
+        NEWLINE * 2 + "=" * 70 + NEWLINE        + "ALREADY DELIVERED FOR THIS MAN" + NEWLINE        + "=" * 70 + NEWLINE * 2
         + "You have already given this man these written responses, so they have "
           "been said and cannot be said again:" + NEWLINE * 2 + listed + NEWLINE * 2
         + "Follow the rule in the instructions: do not repeat any of them. A "
