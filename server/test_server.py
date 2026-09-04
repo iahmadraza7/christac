@@ -675,5 +675,71 @@ else:
           ((_r.stdout or "") + (_r.stderr or ""))[-400:])
 
 
+print("\nHer margin notes, and the placement each one got")
+_INS = pathlib.Path("courtship-decoder-instructions.md").read_text(encoding="utf-8")
+_DECODE = {st: pathlib.Path(P.DECODE_FILE[st]).read_text(encoding="utf-8")
+           for st in P.STAGES}
+
+check("the instructions still fit her ChatGPT field",
+      len(_INS) < 8000, f"{len(_INS):,} of 8,000")
+
+# Cross-cutting and small: these must fire at any stage, and in her ChatGPT the
+# instructions are the only thing guaranteed to be in front of the model.
+check("item 2, the revised-verdict NOW, is in the instructions",
+      "revises a verdict you already gave" in _INS and "NOW" in _INS)
+check("item 3, an affirmative is not a new man, is in the instructions",
+      '"Sure", "yes" or "okay" is not her moving to another man' in _INS)
+check("item 5, join the written block on, is in the instructions",
+      "join it on. Never let it start cold" in _INS)
+
+# Stage specific: it names two stages, so by her own rule it left the
+# instructions and went to those two decode files. That move is what paid for
+# the three rules above.
+_TEXTING = "In Stage 1 and Stage 2 Phase 1, inconsistent texting or calling says"
+check("the stage-specific texting rule left the instructions",
+      _TEXTING not in _INS)
+check("and landed in Stage 1 and Stage 2 Phase 1",
+      _TEXTING in _DECODE[P.STAGE_1] and _TEXTING in _DECODE[P.STAGE_2_P1])
+check("and nowhere else",
+      not any(_TEXTING in _DECODE[st] for st in
+              (P.STAGE_2_P2, P.STAGE_3, P.STAGE_4)))
+
+_OPENING = ("My Queen... this man's communication is already revealing that he "
+            "could not be ready for marriage.")
+_CLOSING = ("If he comes back to you, with an actual plan, we can assess but "
+            "Remember... early behavior reveals current capacity.")
+_CLARITY = 'a woman finds herself asking "Where is this going?"'
+
+for _st in P.STAGES:
+    _t = _DECODE[_st]
+    check(f"stage {_st}: her softer verdict is present, word for word",
+          _t.count(_OPENING) == 1 and _t.count(_CLOSING) == 1)
+    check(f"stage {_st}: her positioning rule is present, word for word",
+          _t.count(_CLARITY) == 1)
+    check(f"stage {_st}: the early-signal list is still hers to fill",
+          "TO BE FILLED IN" in _t and "(none listed yet)" in _t)
+
+check("the classification was left to her, not guessed at",
+      all("(none listed yet)" in _DECODE[st] for st in P.STAGES))
+
+# The softer verdict is still a verdict, so the lessons unlock behind it.
+for _st in P.STAGES:
+    _early = [b for b in P.verdict_blocks(_st) if "could not be ready" in b]
+    check(f"stage {_st}: the softer verdict counts as a verdict",
+          len(_early) == 1 and P.verdict_score(_early[0], _st) >= 0.9,
+          str(len(_early)))
+
+# Appended, never prepended: the tests above pick verdict_blocks(...)[0].
+for _st in P.STAGES:
+    check(f"stage {_st}: the new block went to the end, not the front",
+          "could not be ready" not in P.verdict_blocks(_st)[0])
+
+# Her rule says "at any point in courtship", and exactly one decode file is
+# always loaded, so it reaches the model at every stage.
+for _st in P.STAGES:
+    check(f"stage {_st}: the positioning rule reaches the model before a verdict",
+          _CLARITY in P.build(_st, False).prefix)
+
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)
