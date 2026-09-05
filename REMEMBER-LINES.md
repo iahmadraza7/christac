@@ -1,6 +1,20 @@
 # Every "Remember" line in her written responses
 
-For her to rule on before anything is cut. Nothing here has been changed or removed - this is a list, not a change.
+> **RULED, 6 September 2026 — applied.** She cut ten and kept six. The six she
+> kept are numbered 1, 2, 10, 11, 13 and 16 below and are untouched in her files.
+> The other ten have been removed: the whole sentence in each case, with the text
+> around it left exactly as it was. Her bold markers stay balanced, every block
+> still closes on her own words, and both halves of the ruling are now asserted
+> by the test suite, so neither a cut line creeping back nor a kept line going
+> missing can pass unnoticed.
+>
+> One consequence worth her eye: the instruction file carried a rule of mine,
+> *"Never end with 'Remember...' as a formula"*, which contradicted her content
+> from the start. With ten lines gone it would have contradicted the six she
+> deliberately kept, so it now reads: never invent a "Remember..." ending, but
+> deliver hers as written.
+
+The list below is the review as it stood before her decision, kept as the record of what she was shown.
 
 **16 lines across the five decode files.** Grouped by what each one does, which is my reading and not hers.
 

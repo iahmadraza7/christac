@@ -977,5 +977,47 @@ check("because Phase 2 does treat that behaviour as a failing sign",
       "He becomes inconsistent in his communication or effort"
       in P.read_file(P.DECODE_FILE[P.STAGE_2_P2]))
 
+print("\nHer ruling on the closing 'Remember' lines: ten cut, six kept")
+# She kept the ones that affirm or carry a nuance she wanted said, and cut the
+# ones whose teaching the lessons now do. Both halves are asserted: a cut line
+# creeping back is as much a regression as a kept one going missing.
+_KEPT = [
+    (P.STAGE_1, "Remember... you are the prize, Queen."),
+    (P.STAGE_2_P2, "the right man may need a moment to process your standard"),
+    (P.STAGE_2_P2, "the No-Girlfriend Standard is only the conversation."),
+    (P.STAGE_3, "won't ask you to sacrifice your peace in order to become his wife"),
+    (P.STAGE_4, "look at that ring on your finger. Remember that moment"),
+    (P.STAGE_4, "he chose you. Now enjoy watching the man you chose"),
+]
+_CUT = [
+    (P.STAGE_1, "a man who's serious about you won't build a relationship through his phone"),
+    (P.STAGE_1, "healthy courtship moves forward in real life, not through"),
+    (P.STAGE_1, "healthy courtship continues moving forward in real life."),
+    (P.STAGE_2_P1, "marriage readiness is demonstrated through alignment"),
+    (P.STAGE_2_P1, "healthy marriages are built on alignment, not attraction alone."),
+    (P.STAGE_2_P1, "healthy character is demonstrated through consistent actions"),
+    (P.STAGE_2_P1, "emotional maturity creates steady connection."),
+    (P.STAGE_3, "the closer a healthy man gets to marriage"),
+    (P.STAGE_3, "the healthiest proposals don't just lead to a wedding."),
+    (P.STAGE_4, "the right man won't become a different person after the proposal"),
+]
+for _st, _probe in _KEPT:
+    check(f"kept in {_st}: {_probe[:44]}",
+          _probe in P.read_file(P.DECODE_FILE[_st]))
+for _st, _probe in _CUT:
+    check(f"cut from {_st}: {_probe[:44]}",
+          _probe not in P.read_file(P.DECODE_FILE[_st]))
+# Capital R only: the closing formula is always capitalised, while her Stage 2
+# passing sign "He listens attentively and remembers what she shares" is not,
+# and has nothing to do with this ruling.
+_remembers = sum(P.read_file(P.DECODE_FILE[st]).count("Remember")
+                 for st in P.STAGES)
+check("exactly her six remain across the five files", _remembers == 6,
+      str(_remembers))
+for _st in P.STAGES:
+    _t = P.read_file(P.DECODE_FILE[_st])
+    check(f"{_st}: her bold markers are still balanced", _t.count("**") % 2 == 0)
+    check(f"{_st}: no gap was left where a line came out", "\n\n\n\n" not in _t)
+
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

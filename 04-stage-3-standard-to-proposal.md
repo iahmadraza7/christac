@@ -268,8 +268,6 @@ His behavior is consistently moving toward marriage. He's not just talking about
 
 Stay in High-League Positioning. A woman who knows she's a wife doesn't cross the finish line for him. She confidently allows him the opportunity to choose, pursue, and claim her.
 
-Remember... the closer a healthy man gets to marriage, the more clarity—not confusion—he creates.
-
 
 ---
 
@@ -391,8 +389,6 @@ Queen... this is the moment you've been waiting for.
 His proposal—and the way he responded afterward—is showing healthy signs that he's ready to become your husband. Rather than resisting your standards, he's continued meeting them with respect, confidence, and intentionality.
 
 Take this moment in. You didn't have to chase, convince, or compromise to get here. You stayed true to your standards, and you allowed a man to reveal whether he had the capacity to build the marriage you were praying for.
-
-Remember... the healthiest proposals don't just lead to a wedding. They mark the beginning of a marriage built on trust, respect, and the confidence that you both chose each other well.
 
 ## Stage 3 — WHEN SHE IS THE ONE ASKING FOR CLARITY
 

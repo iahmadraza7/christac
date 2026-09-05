@@ -60,8 +60,6 @@ I know this may feel overwhelming, especially with wedding plans, family, and th
 
 Don't marry the man you hope he'll become. Marry the man he's consistently showing you he already is.
 
-Remember... the right man won't become a different person after the proposal. He'll continue becoming the husband he promised to be.
-
 
 ### Passing Signs — Stage 4, FILTER: HIS PROGRESSION TOWARD THE ALTAR
 

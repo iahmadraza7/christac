@@ -547,8 +547,6 @@ Queen... this is exactly what you want to see! This man's communication is showi
 
 Stay in High-League Positioning and allow him the opportunity to lead the connection toward meeting you in real life.
 
-Remember... a man who's serious about you won't build a relationship through his phone. He'll move it forward in real life…Your majesty.
-
 
 ---
 
@@ -670,8 +668,6 @@ This isn't about whether he likes you. It's about how he naturally leads. Right 
 
 Release the potential, step back from the connection, and let this one go.
 
-Remember... healthy courtship moves forward in real life, not through relationship-style communication.
-
 
 ### Passing Signs — Stage 1, Courtship Pace Filter: Communication, Progression, and Actions Toward the First Date
 
@@ -731,8 +727,6 @@ Do not assume information the woman did not provide.
 Queen... this is exactly what you want to see! This man's courtship pacing is showing healthy signs so far. He's using communication to move the connection forward in real life, not to create a relationship through his phone.
 
 Stay in High-League Positioning and allow him the opportunity to continue leading the connection. If he's intentionally planned the date, enjoy getting to know him in person.
-
-Remember... healthy courtship continues moving forward in real life.
 
 ## Stage 1 — INCONSISTENT TEXTING OR CALLING
 

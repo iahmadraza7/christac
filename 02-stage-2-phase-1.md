@@ -236,8 +236,6 @@ His behavior is already revealing that he is not currently in a position to inte
 
 Don't wait for him to become ready. Release the connection and make yourself available for the man whose life is already aligned with the future you're building. Every day you spend trying to make an unavailable man fit is another day you're unavailable to the man who's already prepared to choose you.
 
-Remember Queen... marriage readiness is demonstrated through alignment, responsibility, and stability.
-
 
 ### Passing Signs — Stage 2 Phase 1, Filter 2: Marriage Readiness
 
@@ -290,8 +288,6 @@ Queen... this is exactly what you want to see!
 So far, his life is showing healthy signs that he's ready for marriage. His direction is aligned with the future you're looking to build, and that's a beautiful place to be.
 
 Stay in High-League Positioning. Let him continue proving that his life is already prepared for the kind of marriage you're looking to create together.
-
-Remember Queen... healthy marriages are built on alignment, not attraction alone.
 
 
 ---
@@ -356,8 +352,6 @@ Queen... this is exactly why you date with your eyes open.
 His behavior is already revealing cracks in the kind of character a healthy marriage requires. And we both know... character isn't measured by what someone says. It's measured by what they consistently do.
 
 Release the potential, trust the pattern you're seeing, and allow his actions to give you your answer. There are men who naturally demonstrate honesty, integrity, humility, and respect. There are men whose character creates safety because it's woven into who they are. That's the kind of man you're looking to marry.
-
-Remember... healthy character is demonstrated through consistent actions, not convincing words.
 
 
 ### Passing Signs — Stage 2 Phase 1, Filter 3: Character & Integrity
@@ -471,8 +465,6 @@ Your Majesty.... this is not looking good… a healthy connection should feel sa
 His communication is already revealing that he lacks the emotional capacity needed to build a healthy marriage. And we both know... men who show these patterns early rarely become more emotionally healthy over time. They usually become more of who they already are.
 
 Release the potential and trust what his behavior is showing you. There are men who naturally make you feel seen, heard, and emotionally safe. There are men who don't make every conversation about themselves or rush intimacy before it's been earned. That's the kind of man you're looking to marry.
-
-Remember Queen... emotional maturity creates steady connection. It never needs to force closeness before it's been earned.
 
 
 ### Passing Signs — Stage 2 Phase 1, Filter 4: Emotional Capacity & Communication
