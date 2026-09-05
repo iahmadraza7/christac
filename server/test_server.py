@@ -680,11 +680,16 @@ _INS = pathlib.Path("courtship-decoder-instructions.md").read_text(encoding="utf
 _DECODE = {st: pathlib.Path(P.DECODE_FILE[st]).read_text(encoding="utf-8")
            for st in P.STAGES}
 
-check("the instructions still fit her ChatGPT field",
-      len(_INS) < 8000, f"{len(_INS):,} of 8,000")
+# She has retired the ChatGPT build - "im only going to be using the website/new
+# tool .. never the old" - so the 8,000 character instructions field is gone with
+# it. The web app loads this file whole. What is left is a sanity bound: at the
+# size of a decode file, something has been pasted in here by mistake.
+_INS_SANITY_MAX = 20_000
+check("the instructions are a set of rules, not a pasted decode file",
+      len(_INS) < _INS_SANITY_MAX, f"{len(_INS):,} of {_INS_SANITY_MAX:,}")
 
-# Cross-cutting and small: these must fire at any stage, and in her ChatGPT the
-# instructions are the only thing guaranteed to be in front of the model.
+# Cross-cutting: these must fire at any stage, and the instructions are the one
+# part of the prompt that is loaded on every request whatever the stage.
 check("item 2, the revised-verdict NOW, is in the instructions",
       "revises a verdict you already gave" in _INS and "NOW" in _INS)
 check("item 3, an affirmative is not a new man unless one was just offered",
@@ -752,8 +757,8 @@ check("item 3: the sentence it sat beside is untouched",
 # Item 4. The positioning check runs on a pass as well as a fail.
 check("item 4: the positioning check runs on a pass too",
       "After the verdict, pass or fail," in _INS)
-check("item 4: the instructions still fit her ChatGPT field",
-      len(_INS) < 8000, f"{len(_INS):,} of 8,000")
+check("item 4: the instructions stay a set of rules",
+      len(_INS) < _INS_SANITY_MAX, f"{len(_INS):,} of {_INS_SANITY_MAX:,}")
 
 # Item 6. The block that named the wrong filter is gone from every file.
 for _st in P.STAGES:
@@ -949,8 +954,28 @@ check("the id still rides on the request while the page is open",
 check("and is still cleared when the conversation is refused",
       "conversation_limit" in _CHAT)
 
-print("\n  the instructions still fit her ChatGPT field after all of it")
-check("under the 8,000 character limit", len(_INS) < 8000, f"{len(_INS):,}")
+print("\n  and the instructions are still a set of rules after all of it")
+check("within the sanity bound",
+      len(_INS) < _INS_SANITY_MAX, f"{len(_INS):,} of {_INS_SANITY_MAX:,}")
+
+print("\nA stage-specific rule stays in the decode files, not the shared one")
+# With the 8,000 character field retired, this rule could now be moved into the
+# instructions. It must not be, and the reason is scope, not space. Her rule says
+# texting is not a signal "In Stage 1 and Stage 2 Phase 1". Stage 2 Phase 2,
+# Filter 1 fails a man for exactly that behaviour. The instructions are loaded on
+# every request, so putting the rule there would stand that licence next to the
+# failing sign it contradicts — the same shape as the early-signal block that
+# made a dating-profile decode announce the communication filter.
+_TEXTING = ("In Stage 1 and Stage 2 Phase 1, inconsistent texting or calling "
+            "says nothing about his readiness for marriage.")
+_carries = [st for st in P.STAGES if _TEXTING in P.read_file(P.DECODE_FILE[st])]
+check("her texting rule is in exactly the two stages it names",
+      _carries == [P.STAGE_1, P.STAGE_2_P1], str(_carries))
+check("and never in the file loaded for every stage",
+      _TEXTING not in _INS)
+check("because Phase 2 does treat that behaviour as a failing sign",
+      "He becomes inconsistent in his communication or effort"
+      in P.read_file(P.DECODE_FILE[P.STAGE_2_P2]))
 
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 INSTRUCTIONS_FILE = "courtship-decoder-instructions.md"
 # Deduplicated lesson source used by the service. Each lesson is stored
-# once here; the L1-L5 files remain untouched for her GPT.
+# once here; the L1-L5 files are left untouched as her own deliverable.
 LESSON_DIR = "server/lessons"
 NEWLINE = chr(10)
 
@@ -333,10 +333,11 @@ def repeats_earlier_message(message: str, earlier: list[str],
 # ---------------------------------------------------------------------------
 # Lesson composition
 #
-# The L1-L5 files stay exactly as they are, because her GPT can only load one
-# file and needs every lesson for a stage in one place. The service has no such
-# limit, so it stores each lesson once and composes the stage's set on demand —
-# in her original order, so what the model sees is unchanged.
+# The L1-L5 files stay exactly as they are: they are her documents, one per
+# stage, and the service does not read them. It stores each lesson once and
+# composes the stage's set on demand — in her original order, so what the model
+# sees is unchanged. They were built for the ChatGPT version, which she has now
+# retired; they are kept as hers, not because anything here needs them.
 # ---------------------------------------------------------------------------
 _manifest_cache: dict | None = None
 
@@ -377,9 +378,10 @@ def compose_lessons(stage: str) -> str:
 # about his behaviour. That is why this does not breach the rule that lesson
 # material stays out until a verdict.
 #
-# Web app only. Her ChatGPT cannot inject anything per request and its
-# instructions field is near the 8,000 character limit, so that file is left
-# exactly as it is.
+# Injected per request rather than written into the instructions, because the
+# names are only useful for the stage in play: each stage has its own, and the
+# five sitting in the always-loaded file would put the other four in front of
+# every decode. Nothing to do with file size.
 # ---------------------------------------------------------------------------
 _POSITIONING = re.compile(r"POSITIONING\s*([1-9])\s*[:\-–—]?\s*(.+)", re.I)
 
