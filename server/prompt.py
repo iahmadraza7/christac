@@ -147,6 +147,17 @@ def resolve_stage(user_text: str, current: str | None) -> str:
     if named == "4":
         return STAGE_4
 
+    # She has named no stage, and none is established for this man. A date count
+    # settles it on its own: Stage 1 is "before the first date", so any date at
+    # all puts her past it, and her own files split Stage 2 at dates 1-2 versus
+    # date 3 onward. This used to be read only when she said the words "stage
+    # 2", so "I've been on three dates" fell through to Stage 1 - the one file
+    # that says NOT to fail him for never asking her relationship goals.
+    if named is None and current in (None, STAGE_1):
+        n = _date_count(user_text)
+        if n is not None:
+            return STAGE_2_P1 if n <= 2 else STAGE_2_P2
+
     return current or STAGE_1
 
 
@@ -275,9 +286,29 @@ _NEW_MAN = re.compile(
     r"\b(another (man|guy|one)|different (man|guy|one)|someone else|new (man|guy)|"
     r"next (man|guy|one)|a different situation|other man)\b", re.I)
 
+# The flow's own closing offer, and her acceptance of it.
+_OFFERED_ANOTHER = re.compile(
+    r"(decode another|another (man|one) to decode|tell me about another man|"
+    r"another man to decode|about another man when)", re.I)
+_AFFIRMATIVE = re.compile(
+    r"\s*(yes|yeah|yep|yup|sure|ok|okay|please|absolutely|definitely)\b", re.I)
 
-def mentions_a_new_man(text: str) -> bool:
-    return bool(_NEW_MAN.search(text))
+
+def mentions_a_new_man(text: str, last_reply: str | None = None) -> bool:
+    """
+    Whether she has moved on to a different man.
+
+    Naming one is the plain case. The other case is the flow's own closing
+    question: it offers to decode another man, and "yes - I've been on three
+    dates with a man I met online" accepts that offer without ever using the
+    word "another". That read the same as staying with the man in play, so his
+    stage stayed sticky and the new man was decoded against the old man's file.
+    An affirmative only counts when the offer was actually just made.
+    """
+    if _NEW_MAN.search(text):
+        return True
+    return bool(last_reply and _OFFERED_ANOTHER.search(last_reply)
+                and _AFFIRMATIVE.match(text))
 
 
 def repeats_earlier_message(message: str, earlier: list[str],

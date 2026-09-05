@@ -687,8 +687,9 @@ check("the instructions still fit her ChatGPT field",
 # instructions are the only thing guaranteed to be in front of the model.
 check("item 2, the revised-verdict NOW, is in the instructions",
       "revises a verdict you already gave" in _INS and "NOW" in _INS)
-check("item 3, an affirmative is not a new man, is in the instructions",
-      '"Sure", "yes" or "okay" is not her moving to another man' in _INS)
+check("item 3, an affirmative is not a new man unless one was just offered",
+      '"Sure", "yes" or "okay" moves her to another man only when you just '
+      'offered to decode one' in _INS)
 check("item 5, join the written block on, is in the instructions",
       "join it on. Never let it start cold" in _INS)
 
@@ -856,6 +857,100 @@ check("with her wording for the connection",
       "this new behavior changes things..." in _INS_NOW())
 check("and it still says an unused response is delivered as written",
       "using the lessons" in _INS_NOW())
+
+# ---------------------------------------------------------------------------
+# Her Sept 4 second document. Three faults she hit in live use, each replayed
+# with the wording she actually typed.
+# ---------------------------------------------------------------------------
+print("\nBug 1: the three-date man who passed and should have failed")
+
+_OFFER = ("He leads all forward movement, and that includes this season. "
+          "Monitoring him is you quietly taking the wheel. Take your hands "
+          "off it. Want to decode another man?")
+_THREE = ("yes - I've been on three dates with a man I met online. All three "
+          "dates have been great. He plans the dates, initiates consistently, "
+          "and we have really good chemistry. He's asked me a lot about my "
+          "life, career, family, and what I enjoy. But he hasn't asked me "
+          "anything about my relationship goals or what I'm ultimately "
+          "looking for.")
+_GOALS_SIGN = "does not naturally ask about her desire for marriage"
+
+check("her 'yes -' answer to the offer now reads as a new man",
+      P.mentions_a_new_man(_THREE, _OFFER),
+      "the stage stayed sticky on the last man and the wrong file was loaded")
+check("and it lands on Stage 2 Phase 2, not Stage 4 and not Stage 1",
+      P.resolve_stage(_THREE, None) == P.STAGE_2_P2,
+      P.resolve_stage(_THREE, None))
+check("which is the one file carrying the sign she says should fail him",
+      _GOALS_SIGN in P.read_file(P.DECODE_FILE[P.STAGE_2_P2]).lower())
+check("no other decode file carries it, so no other file could fail him",
+      [st for st in P.STAGES
+       if _GOALS_SIGN in P.read_file(P.DECODE_FILE[st]).lower()]
+      == [P.STAGE_2_P2])
+check("Stage 1, where it used to land, says the opposite",
+      "do not treat the absence of this conversation as a failing sign"
+      in P.read_file(P.DECODE_FILE[P.STAGE_1]))
+
+print("\n  and the guards that stop it firing when she has not moved on")
+check("a bare yes with no offer behind it is not a new man",
+      not P.mentions_a_new_man("yes", "Tell me what's been happening."))
+check("a bare yes with no previous reply at all is not a new man",
+      not P.mentions_a_new_man("okay", None))
+check("pushback after the offer stays with the man in play",
+      not P.mentions_a_new_man("but he's been busy with work", _OFFER))
+check("naming one still works without any offer",
+      P.mentions_a_new_man("another man - he texted me", None))
+check("the old single-argument call still behaves as it did",
+      P.mentions_a_new_man("someone else now") and not P.mentions_a_new_man("yes"))
+
+print("\n  a date count alone settles the stage, since Stage 1 is before date one")
+check("'three dates' with no stage named is Phase 2",
+      P.resolve_stage("I've been on three dates with him", None) == P.STAGE_2_P2)
+check("'two dates' with no stage named is Phase 1",
+      P.resolve_stage("we've had two dates so far", None) == P.STAGE_2_P1)
+check("'one date' is Phase 1, not Stage 1",
+      P.resolve_stage("just one date so far", None) == P.STAGE_2_P1)
+check("a stage she names still beats the date count",
+      P.resolve_stage("stage 4, and we had ten dates before he proposed", None)
+      == P.STAGE_4)
+check("no dates and no stage still opens at Stage 1",
+      P.resolve_stage("he messaged me on the app", None) == P.STAGE_1)
+check("an established later stage is not dragged back by a date count",
+      P.resolve_stage("we had three dates before the proposal", P.STAGE_4)
+      == P.STAGE_4)
+
+print("\nBug 2: a message holding both his behavior and something out of scope")
+check("the scope gate no longer fires on a behavior it has no read on",
+      "behavior you have no read on" not in _INS,
+      "this clause let it refuse a message that described what he did")
+check("it now refuses only when she gives no behavior of his",
+      "and gives you no behavior of his" in _INS)
+check("and it is told plainly to decode the half that is his behavior",
+      "decode his behavior and leave the rest" in _INS)
+check("never refuse a message that tells you what he did",
+      "Never refuse a message that tells you what he did" in _INS)
+check("the rule forbidding a partial answer is gone, it contradicted this",
+      "Do not give a partial answer first" not in _INS)
+check("the refusal line itself is unchanged",
+      "That's outside what I do here, beautiful." in _INS)
+
+print("\nBug 3: a refresh starts her cleanly instead of resuming invisibly")
+_CHAT = pathlib.Path(__file__).with_name("static").joinpath("chat.html") \
+    .read_text(encoding="utf-8")
+check("the conversation id is no longer kept in sessionStorage",
+      "sessionStorage." not in _CHAT,
+      "a refresh resumed the old man while the page redrew empty")
+check("nor in localStorage, which would survive even closing the tab",
+      "localStorage." not in _CHAT)
+check("the id starts empty on every page load",
+      "var conversationId = null;" in _CHAT)
+check("the id still rides on the request while the page is open",
+      "conversation_id: conversationId" in _CHAT)
+check("and is still cleared when the conversation is refused",
+      "conversation_limit" in _CHAT)
+
+print("\n  the instructions still fit her ChatGPT field after all of it")
+check("under the 8,000 character limit", len(_INS) < 8000, f"{len(_INS):,}")
 
 print(f"\n{PASSED} passed, {FAILED} failed")
 sys.exit(1 if FAILED else 0)

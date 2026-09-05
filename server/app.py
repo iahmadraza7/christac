@@ -344,8 +344,12 @@ async def chat(body: ChatIn, request: Request) -> Response:
     # She is meant to move on: the flow closes by offering to decode another
     # man. So when she does, put the last man down — his verdict, his turn
     # count and his stage — before any per-man limit is measured.
+    # What it asked her last turn decides whether a bare "yes" is her accepting
+    # the offer of another decode.
+    last_reply = next((m["content"] for m in reversed(conversation.messages)
+                       if m["role"] == "assistant"), None)
     started_new_man = False
-    if conversation.messages and P.mentions_a_new_man(message):
+    if conversation.messages and P.mentions_a_new_man(message, last_reply):
         conversation.start_new_man()
         started_new_man = True
         log.info("conv=%s moving to man #%d, counters reset",
@@ -383,7 +387,7 @@ async def chat(body: ChatIn, request: Request) -> Response:
     since = conversation.turns_since_verdict()
     if (conversation.verdict_delivered and since is not None
             and since <= REPEAT_WINDOW_TURNS
-            and not P.mentions_a_new_man(message)):
+            and not P.mentions_a_new_man(message, last_reply)):
         overlap = P.repeats_earlier_message(message, conversation.her_messages,
                                             REPEAT_SIMILARITY)
         if overlap >= REPEAT_SIMILARITY:

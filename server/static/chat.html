@@ -96,11 +96,12 @@
   var input = document.getElementById("input");
   var send = document.getElementById("send");
 
-  // The conversation id lives in this tab only. An iframe on another domain
-  // cannot rely on cookies, so it is never one.
-  var KEY = "decoder.conversation";
+  // The conversation id lives in this page and dies with it. It used to live in
+  // sessionStorage, which survives a reload: a refresh resumed the old
+  // conversation while the page redrew empty, so the next decode ran on a man
+  // she could no longer see and returned a verdict before she had described
+  // anyone. A refresh now starts her cleanly, matching the blank screen.
   var conversationId = null;
-  try { conversationId = sessionStorage.getItem(KEY); } catch (e) {}
 
   // Her replies carry emphasis - "**My Queen... this isn't looking good.**" -
   // and showing the asterisks raw is what she reported. Only bold and italic
@@ -184,13 +185,11 @@
         if (!res.ok) {
           add(res.d.detail || "Something went wrong. Try again.", "note");
           if (res.d.code === "conversation_limit") {
-            try { sessionStorage.removeItem(KEY); } catch (e) {}
             conversationId = null;
           }
           return;
         }
         conversationId = res.d.conversation_id;
-        try { sessionStorage.setItem(KEY, conversationId); } catch (e) {}
         add(res.d.reply, "from-it");
       })
       .catch(function () {
